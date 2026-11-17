@@ -13,7 +13,7 @@ folder can be copied to another computer and set up with:  python3 brain.py inst
   template character-sheet    the user's fixed prompts, word for word
   lesson "<text>" --card <n>  record a correction so it is not repeated
   new-project <dir> "<Name>"  register a new movie      add-project <dir>   register an existing one
-  install | doctor | budget | sync
+  install | doctor | selftest | budget | sync
   hook                        the gate, called by Claude Code and Codex hooks (JSON on stdin)
 """
 import sys, os, json, re, time, shlex, shutil, subprocess
@@ -25,10 +25,33 @@ STATE = os.path.join(LOCAL, "state")
 PROJECTS_FILE = os.path.join(LOCAL, "projects.json")
 PROJECT_FILE_NAME = "BRAIN-PROJECT.md"
 MARK = "<!-- drama-brain -->"
-PY = "/usr/bin/python3" if os.path.exists("/usr/bin/python3") else (sys.executable or "python3")
-RUN = '%s "%s"' % (PY, os.path.join(HERE, "brain.py"))
+WINDOWS = os.name == "nt"
+
+
+def _python():
+    """How to call Python in a command that Claude, Codex or a person will run. On Windows it must work in cmd,
+    PowerShell and Git Bash alike, so a bare `python` or `py -3` is preferred to a quoted path."""
+    if not WINDOWS:
+        return "/usr/bin/python3" if os.path.exists("/usr/bin/python3") else (sys.executable or "python3")
+    same = lambda a, b: os.path.normcase(os.path.realpath(a)) == os.path.normcase(os.path.realpath(b))
+    w = shutil.which("python")
+    if w and sys.executable and same(w, sys.executable):
+        return "python"
+    if shutil.which("py"):
+        return "py -3"
+    return '"%s"' % (sys.executable or "python").replace("\\", "/")
+
+
+PY = _python()
+ME = os.path.join(HERE, "brain.py").replace("\\", "/") if WINDOWS else os.path.join(HERE, "brain.py")
+RUN = '%s "%s"' % (PY, ME)
 SUBCOMMANDS = ("start", "card", "cards", "docs", "projects", "section", "find", "template", "lesson",
-               "budget", "doctor", "help", "sync", "new-project", "add-project", "install")
+               "budget", "doctor", "help", "sync", "new-project", "add-project", "install", "selftest")
+for _s in (sys.stdout, sys.stderr):                              # Windows consoles are not UTF-8 by default
+    try:
+        _s.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
 
 
 def read(p):
@@ -147,10 +170,10 @@ def load_project(root):
 def project_for(path):
     if not path:
         return None
-    rp = os.path.realpath(path)
+    rp = os.path.normcase(os.path.realpath(path))
     best = None
     for r in roots():
-        rr = os.path.realpath(r)
+        rr = os.path.normcase(os.path.realpath(r))
         if (rp == rr or rp.startswith(rr + os.sep)) and (best is None or len(rr) > len(best)):
             best = r
     return load_project(best) if best else None
@@ -382,7 +405,9 @@ def cmd_budget(_):
 
 
 # ---------------------------------------------------------------- set-up on a computer
-HOOK_CMD = '%s hook 2>/dev/null || true' % RUN
+# The gate never fails a session: `hook` always exits 0 and catches its own errors. On macOS and Linux the command also
+# swallows a missing drive or interpreter; on Windows it stays plain so cmd, PowerShell and Git Bash all accept it.
+HOOK_CMD = ('%s hook' % RUN) if WINDOWS else ('%s hook 2>/dev/null || true' % RUN)
 POINTER = MARK + """
 ## Drama Brain (required)
 
@@ -459,8 +484,12 @@ def cmd_install(_):
     link = os.path.join(home, ".claude", "skills", "ai-microdrama-director")
     if os.path.exists(shared) and not os.path.lexists(link):
         os.makedirs(os.path.dirname(link), exist_ok=True)
-        os.symlink(shared, link)
-        print("skill: linked for Claude at %s" % link)
+        try:
+            os.symlink(shared, link)
+            print("skill: linked for Claude at %s" % link)
+        except OSError:                                          # Windows without the right to make links
+            shutil.copytree(shared, link)
+            print("skill: copied for Claude to %s" % link)
     for r in roots():
         if os.path.isdir(r):
             d = set_pointer(r)
@@ -475,7 +504,7 @@ def cmd_install(_):
 def register(root):
     rs = roots()
     root = os.path.realpath(root)
-    if root not in [os.path.realpath(r) for r in rs]:
+    if os.path.normcase(root) not in [os.path.normcase(os.path.realpath(r)) for r in rs]:
         rs.append(root)
         write(PROJECTS_FILE, json.dumps(rs, indent=1) + "\n")
     return root
@@ -622,8 +651,9 @@ def quiet_pull():
     if not has_remote() or (os.path.exists(stamp) and time.time() - os.path.getmtime(stamp) < 6 * 3600):
         return
     write(stamp, time.strftime("%Y-%m-%d %H:%M:%S"))
+    detach = {"creationflags": 0x00000008 | 0x00000200} if WINDOWS else {"start_new_session": True}
     subprocess.Popen(["git", "-C", HERE, "pull", "--ff-only", "-q"], stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
-                     stderr=subprocess.DEVNULL, start_new_session=True)
+                     stderr=subprocess.DEVNULL, **detach)
 
 
 def cmd_sync(_):
@@ -649,6 +679,54 @@ def cmd_sync(_):
     if p.returncode == 0:
         s = git("push")
         print("pushed" if s.returncode == 0 else "push failed:\n" + s.stderr.strip())
+
+
+def cmd_selftest(_):
+    """Proves on THIS computer that the gate works, by running the exact hook command Claude and Codex will run
+    against a throwaway movie folder. Changes nothing permanent."""
+    import tempfile
+    tmp = os.path.realpath(tempfile.mkdtemp(prefix="brain-selftest-"))
+    write(os.path.join(tmp, PROJECT_FILE_NAME), SKELETON % ("Self Test", "Self Test"))
+    before = roots()
+    write(PROJECTS_FILE, json.dumps(before + [tmp]))
+    sid, other = "selftest-%d" % os.getpid(), "selftest-other-%d" % os.getpid()
+    home = os.path.expanduser("~")
+    passed = []
+
+    def fire(ev, session=sid):
+        p = subprocess.run(HOOK_CMD, shell=True, input=json.dumps(dict(ev, session_id=session)).encode("utf-8"),
+                           stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=home)
+        return p.returncode, p.stdout.decode("utf-8", "replace"), p.stderr.decode("utf-8", "replace")
+
+    def check(name, good, shown=""):
+        passed.append(bool(good))
+        print(("pass  " if good else "FAIL  ") + name + ("" if good else "   -> " + shown.strip()[:300]))
+
+    tool = lambda cmd, cwd=tmp: {"hook_event_name": "PreToolUse", "cwd": cwd, "tool_name": "Bash", "tool_input": {"command": cmd}}
+    try:
+        c, o, e = fire({"hook_event_name": "SessionStart", "cwd": tmp, "source": "startup"})
+        check("the hook command runs, and a session gets the notice", c == 0 and "Drama Brain" in o, "exit %s %s %s" % (c, o, e))
+        c, o, e = fire(tool("echo hi"))
+        check("a command is blocked before the brain is read", '"deny"' in o, "exit %s %s %s" % (c, o, e))
+        c, o, e = fire(tool(RUN + ' start "self test"'))
+        check("the brain's own command is let through", c == 0 and "deny" not in o, o + e)
+        c, o, e = fire(tool("echo hi"))
+        check("the same command is allowed after reading", c == 0 and "deny" not in o, o + e)
+        c, o, e = fire({"hook_event_name": "PreToolUse", "cwd": tmp, "tool_name": "mcp__pollo__generate_image", "tool_input": {}})
+        check("a paid tool is blocked without the credits card", '"deny"' in o, o + e)
+        c, o, e = fire(tool("echo hi", home), other)
+        check("folders that are not movies are left alone", c == 0 and not o.strip(), o + e)
+        p = subprocess.run(RUN + ' start "write a script"', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=tmp)
+        out = p.stdout.decode("utf-8", "replace")
+        check("start prints the core rules and a card", "Core rules" in out and "== Card" in out, out[:200] + p.stderr.decode("utf-8", "replace"))
+    finally:
+        write(PROJECTS_FILE, json.dumps(before, indent=1) + "\n")
+        for s in (sid, other):
+            if os.path.exists(state_path(s)):
+                os.remove(state_path(s))
+        shutil.rmtree(tmp, ignore_errors=True)
+    print("Self-test: %d of %d passed. Hook command on this computer: %s" % (sum(passed), len(passed), HOOK_CMD))
+    return 0 if all(passed) else 1
 
 
 # ---------------------------------------------------------------- the gate (Claude Code and Codex hooks)
@@ -687,7 +765,8 @@ def brain_call(command):
 
 
 def hook_main():
-    ev = json.loads(sys.stdin.read() or "{}")
+    raw = sys.stdin.buffer.read().decode("utf-8", "replace") if hasattr(sys.stdin, "buffer") else sys.stdin.read()
+    ev = json.loads(raw.lstrip("﻿").strip() or "{}")
     if os.path.exists(os.path.join(HERE, "OFF")):
         return
     event = ev.get("hook_event_name", "")
@@ -808,7 +887,8 @@ def main(argv):
         return 0
     table = {"start": cmd_start, "card": cmd_card, "cards": cmd_cards, "docs": cmd_docs, "projects": cmd_projects,
              "section": cmd_section, "find": cmd_find, "template": cmd_template, "lesson": cmd_lesson, "budget": cmd_budget,
-             "doctor": cmd_doctor, "sync": cmd_sync, "install": cmd_install, "new-project": cmd_new_project,
+             "doctor": cmd_doctor, "sync": cmd_sync, "install": cmd_install, "selftest": cmd_selftest,
+             "new-project": cmd_new_project,
              "add-project": cmd_add_project}
     if cmd not in table:
         print("Unknown command: %s\n\n%s" % (cmd, __doc__.strip()))

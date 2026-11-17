@@ -49,6 +49,18 @@ The brain has a private online copy on GitHub, named `drama-brain`, under your a
 4. Open Codex once and approve the new hooks when it asks.
 5. Load the Flow runner extension in Chrome and build its jobs (see "The Flow runner extension" below).
 
+### If the other computer is Windows
+
+- It needs Python 3. Check with `python --version`. If it is missing, install it from python.org (tick "Add python.exe to PATH") or run `winget install Python.Python.3.12`.
+- Unzip or clone the brain to `C:\Users\<you>\drama-brain`, so that `brain.py` is directly inside that folder.
+- Set up and prove it:
+  `python %USERPROFILE%\drama-brain\brain.py install`
+  `python %USERPROFILE%\drama-brain\brain.py selftest`
+  `python %USERPROFILE%\drama-brain\brain.py doctor`
+- Register the movie. For a new one: `python %USERPROFILE%\drama-brain\brain.py new-project "C:\path\to\Movie Folder" "Movie Name"`.
+- `selftest` runs the real gate against a throwaway folder and must show every line as `pass`. If a line fails, the gate is not protecting that computer yet.
+- `move_clips.sh` in the Flow runner is for Mac. On Windows, move the downloaded clips into the movie folder by hand, or ask the agent to.
+
 Keeping the two computers in step:
 
 - A lesson is sent to the online copy the moment it is recorded.
