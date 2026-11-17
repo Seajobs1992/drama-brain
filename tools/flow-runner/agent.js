@@ -12,7 +12,7 @@
   window.__loFlowAgent = true;
   // Version stamp, checked from outside after a reload so a run never uses stale code (17 Nov 2026: a reload
   // silently failed and 2-15 ran in the wrong mode).
-  document.documentElement.dataset.loflowVersion = "2026-11-17g";
+  document.documentElement.dataset.loflowVersion = "2026-11-17h";
 
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   const norm = (s) => (s || "").replace(/\s+/g, " ").trim();
@@ -541,7 +541,9 @@
   // Counting tiles from the newest slipped by one place on 16 Nov 2026 (four EP02 files got their neighbours'
   // clips). Before a tile is downloaded or renamed it is checked: "Reuse prompt" puts the prompt that made it into
   // the prompt box, which is compared with the prompt this job sent, then cleared.
-  const promptKey = (t) => norm(t).toLowerCase().replace(/[^a-z0-9 ]/g, "").slice(0, 70);
+  // The start AND the end of a prompt: clips made from one frame share their first words and differ only in the
+  // spoken line near the end (17 Nov 2026: three Jonah lines from 4-03 looked alike at 70 characters).
+  const promptKey = (t) => { const k = norm(t).toLowerCase().replace(/[^a-z0-9 ]/g, ""); return k.slice(0, 70) + "|" + k.slice(-110); };
   async function promptOf(g) {
     g.el.scrollIntoView({ block: "center" });
     const box = g.el.getBoundingClientRect();
