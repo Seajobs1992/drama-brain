@@ -115,6 +115,16 @@ ASSETS = {
         ("EP01-1-28-car", "production/EP01/kling/start-frames/1-28.jpg"),
         ("2-15-street-v4", "production/EP02/frames/2-15-v4-flow.jpg"),
     ],
+    "EP03": [
+        ("EP03-3-12", "production/EP03/kling/start-frames/3-12.jpg"),
+        ("EP03-3-15", "production/EP03/kling/start-frames/3-15.jpg"),
+        ("EP03-3-16", "production/EP03/kling/start-frames/3-16.jpg"),
+        ("EP03-3-17", "production/EP03/kling/start-frames/3-17.jpg"),
+        ("EP03-3-18", "production/EP03/kling/start-frames/3-18.jpg"),
+        ("EP03-3-19", "production/EP03/kling/start-frames/3-19.jpg"),
+        ("EP03-3-20", "production/EP03/kling/start-frames/3-20.jpg"),
+        ("EP03-3-24-bars", "production/EP03/kling/start-frames/3-24.jpg"),
+    ],
     "EP04": [
         ("M12", "production/EP04/masters/M12-workshop-predawn-v3.png"),
         ("M13", "production/EP04/masters/M13-landing-v4.png"),
