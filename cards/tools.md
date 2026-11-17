@@ -21,3 +21,4 @@ keywords: extension, popup, runner code, build_jobs, script bug, chrome, browser
 
 ## Learned the hard way
 - 2026-11-17: Told the user the brain was complete when the Flow runner extension was not in it, only its guide. When packaging the workflow for another computer, list every tool the workflow needs and say plainly which ones are included and which are not.
+- 2026-11-17: Built the brain for Mac only without asking what the other computer was; it was Windows, where the hook command and the skill link would have failed. Before packaging anything for another computer, ask which system it runs, and ship a self-test that proves it there.
