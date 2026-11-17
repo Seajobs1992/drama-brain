@@ -20,3 +20,6 @@ with: project
 - Transcribe the finished file: every line present, in order.
 - Write or update the episode report: what went wrong, what was fixed, credits spent including credits wasted by your own mistakes, and what deserves the user's eye.
 - Send the small phone preview with the report.
+
+## Learned the hard way
+- 2026-11-17: On 17 Nov 2026 the user cut EP02 themselves and asked for ONE ElevenLabs instrumental for the edit. Music in the user's own edit is allowed when they ask, and ElevenLabs is fine for music; the no-ElevenLabs rule is about character voices, and the no-music rule is about music baked into generated clips. Score to the cut's moods with timestamps, one take.
