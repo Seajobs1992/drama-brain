@@ -167,6 +167,17 @@ for ep, _ in EPISODES:
         if fx.get("alt"): img["altPrompt"] = fx["alt"].strip()
         if fx.get("ingredients"): img["ingredients"] = list(fx["ingredients"])
         images.append(img)
+# Extra image jobs that are not shot-plan frames (thumbnails, posters): flow-fixes.json keys "image <id>" with
+# "prompt", "ingredients" and "aspect" ("16:9" or "9:16"). Same runner, same 0-credit image model.
+for ep, _ in EPISODES:
+    fixes_path = os.path.join(ROOT, "production", ep, "flow-fixes.json")
+    fixes = json.load(open(fixes_path)) if os.path.exists(fixes_path) else {}
+    for k, fx in fixes.items():
+        if not k.startswith("image ") or not fx.get("prompt"): continue
+        iid = k[len("image "):]
+        images.append({"id": iid, "episode": ep, "type": "image", "title": fx.get("title", iid), "aspect": fx.get("aspect", "16:9"),
+                       "ingredients": list(fx.get("ingredients", [])), "hasFile": False, "prompt": fx["prompt"].strip(),
+                       "fixPrompt": fx["prompt"].strip(), "line": "none", "output": f"LOCKED-OUT/{ep}/flow-frames/{iid}"})
 json.dump(images, open(os.path.join(HERE, "jobs", "images.json"), "w"), indent=1)
 print(f"{len(images)} image jobs written (draft prompts)")
 missing = [j["frame"] for j in out if not os.path.exists(os.path.join(HERE, "jobs", "frames", j["frame"]))]

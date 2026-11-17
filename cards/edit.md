@@ -23,3 +23,4 @@ with: project
 
 ## Learned the hard way
 - 2026-11-17: On 17 Nov 2026 the user cut EP02 themselves and asked for ONE ElevenLabs instrumental for the edit. Music in the user's own edit is allowed when they ask, and ElevenLabs is fine for music; the no-ElevenLabs rule is about character voices, and the no-music rule is about music baked into generated clips. Score to the cut's moods with timestamps, one take.
+- 2026-11-17: LOCKED OUT already has a cover style: production/EP01/upload/EP01 TikTok cover 1080x1920.jpg. For each new episode the user wants that same cover with only the EPISODE number changed (Arial Black 56, dark on the yellow badge). Do not design or generate a new thumbnail; check the previous episode's upload folder first.
