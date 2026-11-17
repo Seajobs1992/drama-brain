@@ -78,6 +78,13 @@ The Chrome extension that runs frames and clips in Google Flow travels inside th
 - **On another computer:** in Chrome open `chrome://extensions`, turn on Developer mode, press Load unpacked and choose `~/drama-brain/tools/flow-runner`. Then build the jobs from the movie folder on that computer: `python3 ~/drama-brain/tools/flow-runner/build_jobs.py "<movie folder>"`. The guide's section 10 has every step.
 - **Changing the extension:** the working copy is the one in the LOCKED OUT folder on the first Mac (`mirrors.json` names it). `sync` on that Mac copies it into the brain.
 
+## The Firefly runner extension
+
+The second Chrome extension, at `tools/firefly-kling-runner`, with its guide in `tools/firefly-kling-runner/README.md`. It runs in Adobe Firefly: Kling 3.0 video clips, and still images (text to image and image to image) with the model, aspect, size, quality and an "Unlimited models only" switch chosen in its popup.
+
+- **On another computer:** Load unpacked `~/drama-brain/tools/firefly-kling-runner`, then `python3 ~/drama-brain/tools/firefly-kling-runner/build_jobs.py "<movie folder>"`. Its `jobs` folder is built per computer, like the Flow runner's.
+- **Changing it:** same as the Flow runner. The working copy is in the LOCKED OUT folder on the first Mac, and `sync` copies it here.
+
 ## Turning it off
 
 Create an empty file named `OFF` in the brain folder. Delete it to turn the gate back on. Only you should do this.

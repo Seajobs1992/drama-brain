@@ -9,15 +9,16 @@ A Chrome extension that runs the LOCKED OUT Kling clips in Adobe Firefly for you
 5. waits until the new video appears in the Firefly feed with the same prompt;
 6. downloads it to `Downloads/LOCKED-OUT/EP01/clips/1-29.mp4` (Episode 2 goes to `EP02/clips`), then moves on to the next clip.
 
-It holds 68 clips: 41 for Episode 1 and 27 for Episode 2, in edit order, built from `production/EP01/EP01-KLING-ANIMATION-SCRIPT.md` and `production/EP02/EP02-KLING-ANIMATION-SCRIPT.md`.
+It holds the clips of every episode that has a Kling script (`production/EPxx/EPxx-KLING-ANIMATION-SCRIPT.md`), in edit order. It also makes still images (see Images below).
 
 ## Install (once)
 
 1. In Chrome open `chrome://extensions`.
 2. Turn on **Developer mode** (top right).
-3. Click **Load unpacked** and choose this folder: `/Volumes/MAC/NEW DRAM/tools/firefly-kling-runner`.
-4. Pin "LOCKED OUT Firefly Runner" from the puzzle-piece menu.
-5. Reload any Firefly tab that was already open.
+3. Click **Load unpacked** and choose this folder. On the first Mac: `/Volumes/MAC/NEW DRAM/tools/firefly-kling-runner`. On another computer: `~/drama-brain/tools/firefly-kling-runner` (on Windows `%USERPROFILE%\drama-brain\tools\firefly-kling-runner`).
+4. Build its job list from the movie folder on that computer: `python3 build_jobs.py "<movie folder>"` (run it in this folder). Do this again whenever the scripts, frames or image jobs change, then press the reload arrow on the extension.
+5. Pin "LOCKED OUT Firefly Runner" from the puzzle-piece menu.
+6. Reload any Firefly tab that was already open.
 
 ## Use
 

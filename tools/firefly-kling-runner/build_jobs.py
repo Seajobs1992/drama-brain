@@ -1,14 +1,18 @@
 #!/usr/bin/env python3
 """Rebuild jobs/jobs.json and jobs/frames/ from the Kling scripts.
-Run from anywhere:  python3 "/Volumes/MAC/NEW DRAM/tools/firefly-kling-runner/build_jobs.py"
+Run from anywhere:  python3 build_jobs.py "<movie folder>"   (no folder given: MOVIE_DIR, else the LOCKED OUT folder)
 """
-import json, os, re, shutil
-ROOT = "/Volumes/MAC/NEW DRAM"
+import json, os, re, shutil, sys
+ROOT = os.path.abspath(os.path.expanduser(sys.argv[1] if len(sys.argv) > 1 else os.environ.get("MOVIE_DIR", "/Volumes/MAC/NEW DRAM")))
+if not os.path.isdir(os.path.join(ROOT, "production")):
+    sys.exit(f'No "production" folder in {ROOT}. Run:  python3 build_jobs.py "<movie folder>"')
 HERE = os.path.dirname(os.path.abspath(__file__))
 EPISODES = [("EP01", "production/EP01/EP01-KLING-ANIMATION-SCRIPT.md"), ("EP02", "production/EP02/EP02-KLING-ANIMATION-SCRIPT.md"), ("EP03", "production/EP03/EP03-KLING-ANIMATION-SCRIPT.md"), ("EP04", "production/EP04/EP04-KLING-ANIMATION-SCRIPT.md")]
 
 out = []
 for ep, rel in EPISODES:
+    if not os.path.isfile(os.path.join(ROOT, rel)):
+        continue   # this movie has no such episode script yet
     doc = open(os.path.join(ROOT, rel)).read()
     clips = re.split(r"\n## \d+\. (?:The c|C)lips", doc)[1].split("\n## ")[0]  # EP04 calls it "## 6. Clips"
     found = {}
@@ -66,6 +70,7 @@ for it in image_sources():
                    "output": f"LOCKED-OUT/{ep}/firefly-images/{it['id']}.auto"})
 out += images
 print(f"{len(images)} image jobs" + (f"; skipped: {bad}" if bad else ""))
+os.makedirs(os.path.join(HERE, "jobs"), exist_ok=True)
 json.dump(out, open(os.path.join(HERE, "jobs", "jobs.json"), "w"), indent=1)
 missing = [j["frame"] for j in out if j.get("type") != "image" and not os.path.exists(os.path.join(HERE, "jobs", "frames", j["frame"]))]
 print(f"{len(out)} clips written; missing frames: {missing or 'none'}")
