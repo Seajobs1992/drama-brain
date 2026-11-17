@@ -1,8 +1,19 @@
 [
-  {
-    "_about": "The Flow runner Chrome extension. Its working copy (the master, loaded in Chrome) is in the LOCKED OUT folder on the first Mac. `sync` copies its code here whenever that folder is reachable, so the brain always carries the current extension. The jobs folder (the movie's frames, cast pictures and prompts) is never copied: each computer builds it from its own movie folder.",
-    "from": "/Volumes/MAC/NEW DRAM/tools/flow-runner",
-    "to": "tools/flow-runner",
-    "exclude": ["jobs", "popup-preview.jpg"]
-  }
+ {
+  "_about": "The Flow runner Chrome extension. Its working copy (the master, loaded in Chrome) is in the LOCKED OUT folder on the first Mac. `sync` copies its code here whenever that folder is reachable, so the brain always carries the current extension. The jobs folder (the movie's frames, cast pictures and prompts) is never copied: each computer builds it from its own movie folder.",
+  "from": "/Volumes/MAC/NEW DRAM/tools/flow-runner",
+  "to": "tools/flow-runner",
+  "exclude": [
+   "jobs",
+   "popup-preview.jpg"
+  ]
+ },
+ {
+  "_about": "The Firefly runner Chrome extension (Kling video and, since 17 Nov 2026, images: text to image and image to image). Working copy in the LOCKED OUT folder; the jobs folder is built per computer.",
+  "from": "/Volumes/MAC/NEW DRAM/tools/firefly-kling-runner",
+  "to": "tools/firefly-kling-runner",
+  "exclude": [
+   "jobs"
+  ]
+ }
 ]

@@ -1,0 +1,26 @@
+{
+  "manifest_version": 3,
+  "name": "LOCKED OUT Firefly Runner",
+  "version": "1.0.0",
+  "description": "Fills Adobe Firefly video-generate with each LOCKED OUT clip (start frame, prompt, Kling 3.0 settings), generates, waits and downloads.",
+  "permissions": ["downloads", "storage"],
+  "host_permissions": ["https://firefly.adobe.com/*", "https://*.adobe.io/*"],
+  "background": { "service_worker": "background.js" },
+  "action": { "default_popup": "popup.html", "default_title": "LOCKED OUT runner" },
+  "content_scripts": [
+    {
+      "matches": ["https://firefly.adobe.com/*"],
+      "js": ["agent.js"],
+      "world": "MAIN",
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["https://firefly.adobe.com/*"],
+      "js": ["bridge.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    { "resources": ["jobs/*", "jobs/frames/*/*"], "matches": ["https://firefly.adobe.com/*"] }
+  ]
+}

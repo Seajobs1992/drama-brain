@@ -1,0 +1,24 @@
+[
+ {
+  "id": "test-apple-2",
+  "episode": "IMAGES",
+  "title": "Test: text to image",
+  "prompt": "Test image two: a single yellow pear on a plain wooden table, soft daylight from the left, photoreal.",
+  "model": "GPT Image 2.6 Flare",
+  "aspect": "16:9",
+  "resolution": "1K"
+ },
+ {
+  "id": "4-09-car",
+  "episode": "EP04",
+  "title": "4-09 with the Episode 1 car (image to image)",
+  "prompt": "Edit Image 1. Keep everything in Image 1 exactly as it is: the camera looking down from the handrail, the wet cobbles, the railing, the man in black, his face, clothes and pose, the light and rain. Change only one thing: the old-fashioned black limousine becomes the modern black four-door saloon car from Image 2, parked in the same place at the kerb, the man standing beside it as before. No number plates, no text. Photoreal film still, 16:9.",
+  "refs": [
+   "production/EP04/kling/start-frames/4-09.jpg",
+   "production/EP01/kling/start-frames/1-28.jpg"
+  ],
+  "model": "GPT Image 2.6 Flare",
+  "aspect": "16:9",
+  "resolution": "2K"
+ }
+]
