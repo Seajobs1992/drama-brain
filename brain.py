@@ -614,6 +614,9 @@ def cmd_sync(_):
         print("No online copy is connected, so nothing was sent. The folder can still be copied by hand.")
         return 0
     p = git("pull", "--rebase")
+    if p.returncode != 0:                                        # the background fetch may be mid-way: once more
+        time.sleep(3)
+        p = git("pull", "--rebase")
     print("pulled" if p.returncode == 0 else "pull failed:\n" + p.stderr.strip())
     if p.returncode == 0:
         s = git("push")
