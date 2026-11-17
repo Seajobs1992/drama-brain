@@ -31,3 +31,4 @@ Clips are made in Google Flow through the user's Flow runner extension. Guide: d
 
 ## Learned the hard way
 - 2026-11-17: Flow's grid reuses its tile elements while scrolling, so a mark put on a tile element can end up on a different clip. On EP03 the fetch-by-prompt helper downloaded the same clip ten times under ten names. Fixed in the extension (2026-11-17f): download the tile that was just matched, never one found again by a mark. After any batch download, check the files are all different (md5) and look at a still of each.
+- 2026-11-17: The user runs the Flow extension themselves and it is fast; driving it from outside with scripts was slow and buggy (EP03 took over an hour). Prepare the jobs, tell the user exactly which clips to tick and which settings to change, let them press Animate, then check the results. Drive it only if asked.

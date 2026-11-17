@@ -193,6 +193,7 @@ An assistant with access to the files can do steps 1 to 4 without the popup exce
 - **Props:** describe by shape, never by a word with two meanings ("red bow" became a ribbon). Put the action the shot plan asks for in the prompt.
 - **A prop reference attached to a clip does not change what is already in the frame.** Fix the frame first in Flow (an image job with the frame and the prop as ingredients, 0 credits), then animate.
 - **After a run, compare a still from each clip with its start frame** (set, positions, props, the foreground person) before assembling. A word check alone is not enough.
+- **Never trust a mark on a tile.** Flow's grid reuses its tile elements as it scrolls, so a tag left on one can sit on a different clip after a scroll. Since 17 November 2026 the extension downloads the tile it has just matched by prompt, and never looks a tile up by a tag. After any batch of downloads, check that the files are all different and look at a still of each.
 - **After editing the extension,** check the page's `data-loflow-version` stamp; a reload that silently fails runs the old code.
 
 ## 7. Limits and gotchas
