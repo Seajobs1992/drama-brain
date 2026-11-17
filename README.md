@@ -59,7 +59,8 @@ The brain has a private online copy on GitHub, named `drama-brain`, under your a
   `python %USERPROFILE%\drama-brain\brain.py doctor`
 - Register the movie. For a new one: `python %USERPROFILE%\drama-brain\brain.py new-project "C:\path\to\Movie Folder" "Movie Name"`.
 - `selftest` runs the real gate against a throwaway folder and must show every line as `pass`. If a line fails, the gate is not protecting that computer yet.
-- `move_clips.sh` in the Flow runner is for Mac. On Windows, move the downloaded clips into the movie folder by hand, or ask the agent to.
+- Both Chrome extensions work on Windows: Load unpacked `%USERPROFILE%\drama-brain\tools\flow-runner` and `%USERPROFILE%\drama-brain\tools\firefly-kling-runner`, then build each one's jobs with `python` instead of `python3`, for example `python %USERPROFILE%\drama-brain\tools\firefly-kling-runner\build_jobs.py "C:\path\to\Movie Folder"`.
+- `move_clips.sh` in both runners is for Mac. On Windows, move the downloaded clips from `Downloads\LOCKED-OUT\` into the movie folder by hand, or ask the agent to.
 
 Keeping the two computers in step:
 
