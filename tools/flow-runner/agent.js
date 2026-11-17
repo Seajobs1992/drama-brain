@@ -12,7 +12,7 @@
   window.__loFlowAgent = true;
   // Version stamp, checked from outside after a reload so a run never uses stale code (17 Nov 2026: a reload
   // silently failed and 2-15 ran in the wrong mode).
-  document.documentElement.dataset.loflowVersion = "2026-11-17f";
+  document.documentElement.dataset.loflowVersion = "2026-11-17g";
 
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   const norm = (s) => (s || "").replace(/\s+/g, " ").trim();
@@ -223,11 +223,27 @@
   // Uploads a file into the project under its own name. The "Add media -> Upload" menu opens a native file
   // dialog a script cannot feed (checked 2026-11-16), so the picture is pasted into the prompt box instead:
   // Flow uploads it under the file's name and shows it as an ingredient, which is then cleared away.
+  // Is a picture with this name already in the project? Asked through the picker's search, which sees the whole
+  // library; the grid shows only the ~16 tiles near the view, so looking there missed older uploads and the same
+  // frame was uploaded again (17 Nov 2026).
+  async function existsInProject(name) {
+    const opener = byAria("Add ingredients to the prompt box");
+    if (!opener) return false;
+    opener.click();
+    if (!(await waitFor(() => [...document.querySelectorAll("[role=tab]")].some(visible), 5000))) { await dismiss(); return false; }
+    const t = [...document.querySelectorAll("[role=tab]")].find((e) => visible(e) && /Uploads\s*$/.test(norm(e.innerText)));
+    if (t && t.getAttribute("aria-selected") !== "true") { t.click(); await sleep(900); }
+    const search = pickerSearch();
+    if (search) { search.focus(); search.select(); document.execCommand("insertText", false, name); }
+    const hit = await waitFor(() => [...document.querySelectorAll("[role=option]")].find((o) => visible(o) && sameName(optionName(o), name)) || null, 8000, 300);
+    await dismiss();
+    return !!hit;
+  }
   async function uploadAsset(name, buf) {
     scrollTop();
     const labelOf = (t) => t.getAttribute("aria-label") || "";
     const inProject = () => [...document.querySelectorAll("flow-grid-tile-container")].find((t) => labelOf(t) === name && t.querySelector("[data-media-id]")) || null;
-    if (inProject()) return { name, note: "already in this project" };
+    if (inProject() || (await existsInProject(name))) return { name, note: "already in this project" };
     await dismiss();
     await clearComposer();
     const pm = promptBox();
