@@ -39,10 +39,20 @@ Run them as `python3 ~/drama-brain/brain.py <command>`.
 
 ## Another computer
 
-1. Copy the whole `drama-brain` folder to the home folder there (USB, AirDrop, or a private online copy through `brain.py sync`).
+The brain has a private online copy on GitHub, named `drama-brain`, under your account.
+
+1. On the other computer, sign in to GitHub in a terminal (`gh auth login`), then fetch the brain into the home folder:
+   `gh repo clone drama-brain ~/drama-brain`
+   (No `gh`? Copy the whole `drama-brain` folder across by USB or AirDrop instead.)
 2. Run `python3 ~/drama-brain/brain.py install`. It connects Claude and Codex on that computer and installs the writing skill.
-3. Register the movie folders that exist on that computer: `brain.py add-project "<folder>"`.
+3. Register the movie folders that exist on that computer: `brain.py add-project "<folder>"`. A movie folder copied from this computer already has its `BRAIN-PROJECT.md`.
 4. Open Codex once and approve the new hooks when it asks.
+
+Keeping the two computers in step:
+
+- A lesson is sent to the online copy the moment it is recorded.
+- Each new Claude or Codex session quietly fetches the latest brain (at most every six hours).
+- After you edit a card by hand, or if `doctor` says the copies are out of step, run `python3 ~/drama-brain/brain.py sync`.
 
 The `local/` folder is per computer (which movie folders exist here, session notes) and is never copied.
 

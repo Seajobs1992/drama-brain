@@ -356,6 +356,8 @@ def cmd_lesson(args):
         print("Recorded in lessons.md and on card %s. Keep the card short: %s budget" % (card, RUN))
     else:
         print("Recorded in lessons.md (no card named; add --card <name> so it is read at the right moment).")
+    if has_remote():
+        cmd_sync([])                                             # so the other computer gets the lesson too
 
 
 def tokens(text):
@@ -562,10 +564,41 @@ def cmd_doctor(_):
             if w != "project" and w not in cards:
                 ok = line(False, "card %s names a companion that does not exist: %s" % (n, w))
     line(True, "%d cards, %d general documents, %d movie(s)" % (len(cards), len(GENERAL_DOCS), len(roots())))
+    if has_remote():
+        g = lambda *a: subprocess.run(["git", "-C", HERE] + list(a), capture_output=True, text=True).stdout.strip()
+        dirty = bool(g("status", "--porcelain"))
+        ahead_behind = g("rev-list", "--left-right", "--count", "HEAD...@{u}").split()
+        ahead, behind = (int(ahead_behind[0]), int(ahead_behind[1])) if len(ahead_behind) == 2 else (0, 0)
+        line(not dirty and not ahead and not behind, "online copy: %s" % (
+            "in step (as of the last check)" if not (dirty or ahead or behind) else
+            "%s%s%s  -> run: sync" % ("changes here not saved; " if dirty else "", "%d to send; " % ahead if ahead else "",
+                                      "%d to receive" % behind if behind else "")))
+    else:
+        line(True, "no online copy connected (copy the folder by hand to another computer)")
     err = os.path.join(LOCAL, "hook-errors.log")
     if os.path.exists(err) and os.path.getsize(err):
         line(False, "the gate logged errors: %s" % err)
     print("All good." if ok else "Something needs attention (lines marked FIX).")
+
+
+def has_remote():
+    if not os.path.isdir(os.path.join(HERE, ".git")):
+        return False
+    try:
+        return bool(subprocess.run(["git", "-C", HERE, "remote"], capture_output=True, text=True).stdout.strip())
+    except OSError:
+        return False
+
+
+def quiet_pull():
+    """At most every six hours, fetch the other computer's changes in the background. Fast-forward only, so it can
+    never leave the folder half merged; if both computers changed things, `sync` sorts it out."""
+    stamp = os.path.join(LOCAL, "last-pull")
+    if not has_remote() or (os.path.exists(stamp) and time.time() - os.path.getmtime(stamp) < 6 * 3600):
+        return
+    write(stamp, time.strftime("%Y-%m-%d %H:%M:%S"))
+    subprocess.Popen(["git", "-C", HERE, "pull", "--ff-only", "-q"], stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
+                     stderr=subprocess.DEVNULL, start_new_session=True)
 
 
 def cmd_sync(_):
@@ -657,6 +690,10 @@ def hook_main():
                 if time.time() - os.path.getmtime(p) > 14 * 86400:
                     os.remove(p)
         except OSError:
+            pass
+        try:
+            quiet_pull()
+        except Exception:
             pass
         again = "Your context was compacted, so the rules you had loaded are gone. " if ev.get("source") == "compact" else ""
         context(event, "[Drama Brain] %sThis folder is the movie \"%s\", and its rules are enforced. Before any tool that changes or "
