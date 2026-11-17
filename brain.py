@@ -543,6 +543,8 @@ def cmd_new_project(args):
     register(root)
     set_pointer(root)
     print("Registered %s at %s. Fill in %s. Load card new-movie for the order of work." % (name, root, p))
+    print("The project file lists a bible and a continuity file that do not exist yet. That is expected: they are "
+          "written as the movie is developed (steps 2 and 4 on card new-movie).")
 
 
 def cmd_add_project(args):
@@ -578,7 +580,9 @@ def cmd_doctor(_):
         if p:
             for k, d in sorted(p["docs"].items()):
                 if not os.path.exists(d["path"]):
-                    ok = line(False, "  %s document '%s' missing: %s" % (p["name"], k, d["path"]))
+                    # A movie's own documents are written as the movie is made; a new movie has none yet.
+                    print("todo    %s: '%s' is not written yet (%s). Normal for a new movie; card new-movie says when to write it."
+                          % (p["name"], k, d["path"]))
     for k, d in sorted(docs_for(None).items()):
         if not os.path.exists(d["path"]):
             ok = line(False, "general document '%s' missing: %s" % (k, d["path"]))
