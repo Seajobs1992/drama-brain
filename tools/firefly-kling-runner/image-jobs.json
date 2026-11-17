@@ -3,10 +3,7 @@
   "id": "test-apple-2",
   "episode": "IMAGES",
   "title": "Test: text to image",
-  "prompt": "Test image two: a single yellow pear on a plain wooden table, soft daylight from the left, photoreal.",
-  "model": "GPT Image 2.6 Flare",
-  "aspect": "16:9",
-  "resolution": "1K"
+  "prompt": "Test image two: a single yellow pear on a plain wooden table, soft daylight from the left, photoreal."
  },
  {
   "id": "4-09-car",
@@ -16,9 +13,6 @@
   "refs": [
    "production/EP04/kling/start-frames/4-09.jpg",
    "production/EP01/kling/start-frames/1-28.jpg"
-  ],
-  "model": "GPT Image 2.6 Flare",
-  "aspect": "16:9",
-  "resolution": "2K"
+  ]
  }
 ]

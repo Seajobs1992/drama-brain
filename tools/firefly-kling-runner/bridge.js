@@ -103,7 +103,7 @@
         const statuses = st.statuses || {};
         let submitted = st.submitted || [];
         const settings = { resolution: "720p", audioMode: "all", timeoutMin: 15, maxActive: 5,
-          imageModel: "gpt-image@gpt-image-2.6-star-swirl", imageAspect: "16:9", imageResolution: "2K", unlimitedOnly: true, ...(st.settings || {}) };
+          imageModel: "gpt-image@gpt-image-2.6-star-swirl", imageAspect: "16:9", imageResolution: "2K", imageQuality: "max", unlimitedOnly: true, ...(st.settings || {}) };
         const overrides = st.promptOverrides || {};
         const argsFor = (key) => {
           const job = byKey[key];
@@ -160,7 +160,7 @@
               for (const ref of job.refs || []) { const { b64 } = await bg({ type: "getFrame", frame: ref }); bufs.push({ buf: b64ToBuf(b64), name: ref.split("/").pop() }); }
               banner(`${key}: filling Firefly (image settings, references, prompt)…\n${submitted.length} generating`);
               const r = await call("fillImage", { job, settings, bufs });
-              await log(`${key}: filled. ${r.bar}, ${r.refs} reference(s), ${r.cost}`);
+              await log(`${key}: filled. ${r.bar}${r.quality ? `, quality ${r.quality}` : ""}, ${r.refs} reference(s), ${r.cost}`);
             } else {
             banner(`${key}: loading start frame…\n${submitted.length} generating`);
             const { b64 } = await bg({ type: "getFrame", frame: job.frame });

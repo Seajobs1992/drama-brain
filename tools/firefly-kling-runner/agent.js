@@ -59,8 +59,17 @@
     const host = tid(hostId);
     if (!host) throw new Error(`${hostId} not found`);
     const picker = host.tagName === "SP-PICKER" ? host : one("sp-picker", host);
+    return chooseIn(picker, host, hostId, value);
+  }
+
+  // The image Quality menu has no name of its own: it is the picker offering "extraHigh". Only GPT Image models show it.
+  function qualityPicker() {
+    return deepAll("sp-picker").find((p) => visible(p) && deepAll("sp-menu-item", p).some((i) => i.value === "extraHigh")) || null;
+  }
+
+  async function chooseIn(picker, host, hostId, value) {
     const items = deepAll("sp-menu-item", host);
-    const item = items.find((i) => i.value === value) || items.find((i) => squash(i.textContent) === squash(value));
+    const item = items.find((i) => i.value === value) || items.find((i) => squash(i.value) === squash(value) || squash(i.textContent) === squash(value));
     if (!item) throw new Error(`${hostId}: option "${value}" not offered (offered: ${items.map((i) => norm(i.textContent) || i.value).join(", ")})`);
     if (picker.value === item.value) return;
     for (let attempt = 0; attempt < 2 && picker.value !== item.value; attempt++) {
@@ -204,13 +213,18 @@
     await sleep(800);
     await choose("ugi-aspect-ratio-picker", job.aspect || settings.imageAspect);
     await choose("ugi-resolution-picker", job.resolution || settings.imageResolution);
+    const quality = job.quality || settings.imageQuality || "";
+    let qualityNote = "";
+    const qp = quality ? qualityPicker() : null;
+    if (qp) { await chooseIn(qp, qp, "Quality", quality); qualityNote = norm((deepAll("sp-menu-item", qp).find((i) => i.value === qp.value) || {}).textContent) || qp.value; }
+    else if (quality) qualityNote = "model has no quality setting";
     await closeSettings();
     const refs = await addReferences(bufs);
     await setPrompt(job.prompt);
     const bar = norm(tid("ugi-generative-settings-button").textContent).replace(/\s*Generative settings$/, "");
     const cost = norm((tid("generation-cost-indicator-v2-button") || {}).textContent);
     if (settings.unlimitedOnly && !/unlimited/i.test(cost)) throw new Error(`Firefly shows "${cost}" for this image, not Unlimited access. Nothing generated (untick "Unlimited models only" in Settings to allow it).`);
-    return { bar, cost, refs };
+    return { bar, cost, refs, quality: qualityNote };
   }
   // A finished image's file: the picture in the results list whose alt text is the asset's own name.
   async function imageUrlForIndex(idx, name) {

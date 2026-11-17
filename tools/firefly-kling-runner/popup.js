@@ -15,6 +15,12 @@ async function init() {
   $("res").value = s.resolution;
   $("timeout").value = String(s.timeoutMin);
   $("maxActive").value = String(s.maxActive);
+  const modelIds = { "gpt-image@gpt-image-2.6-star-swirl": "GPT Image 2.6 Flare" };
+  $("imgModel").value = modelIds[s.imageModel] || s.imageModel || "GPT Image 2.6 Flare";
+  $("imgAspect").value = s.imageAspect || "16:9";
+  $("imgRes").value = s.imageResolution || "2K";
+  $("imgQuality").value = s.imageQuality || "max";
+  $("unlimitedOnly").checked = s.unlimitedOnly ?? true;
   selected = new Set(st.selected || []);
   overrides = st.promptOverrides || {};
   activeKey = st.activeKey || [...selected][0] || key(jobs[0]);
@@ -82,7 +88,7 @@ function showDetail(k) {
   $("dtitle").textContent = j.title;
   const audio = j.dialogue;  // sound only on dialogue clips
   $("dset").textContent = j.type === "image"
-    ? `Image · ${j.model || s.imageModel || "GPT Image 2.6 Flare"} · ${j.aspect || s.imageAspect || "16:9"} · ${j.resolution || s.imageResolution || "2K"} · ${(j.refs || []).length} reference(s)${(s.unlimitedOnly ?? true) ? " · unlimited models only" : ""}`
+    ? `Image · ${j.model || s.imageModel || "GPT Image 2.6 Flare"} · ${j.aspect || s.imageAspect || "16:9"} · ${j.resolution || s.imageResolution || "2K"} · quality ${j.quality || s.imageQuality || "max"} · ${(j.refs || []).length} reference(s)${(s.unlimitedOnly ?? true) ? " · unlimited models only" : " · PAID MODELS ALLOWED"}`
     : `Kling 3.0 · 16:9 · ${s.resolution} · ${j.seconds} s · audio ${audio ? "on" : "off"} · multi-shot off`;
   $("dout").textContent = `Saves to Downloads/${j.output}`;
   $("dprompt").value = overrides[k] || j.prompt;
@@ -127,7 +133,9 @@ function saveSel() {
 }
 
 function settings() {
-  return { resolution: $("res").value, timeoutMin: Number($("timeout").value), maxActive: Number($("maxActive").value) };
+  return { resolution: $("res").value, timeoutMin: Number($("timeout").value), maxActive: Number($("maxActive").value),
+    imageModel: $("imgModel").value, imageAspect: $("imgAspect").value, imageResolution: $("imgRes").value,
+    imageQuality: $("imgQuality").value, unlimitedOnly: $("unlimitedOnly").checked };
 }
 
 async function fireflyTab() {
@@ -219,7 +227,7 @@ $("selPending").onclick = async () => {
   saveSel();
   render();
 };
-["res", "timeout", "maxActive"].forEach((id) => ($(id).onchange = () => { store.set({ settings: settings() }); if (activeKey) showDetail(activeKey); }));
+["res", "timeout", "maxActive", "imgModel", "imgAspect", "imgRes", "imgQuality", "unlimitedOnly"].forEach((id) => ($(id).onchange = () => { store.set({ settings: settings() }); if (activeKey) showDetail(activeKey); }));
 
 chrome.storage.onChanged.addListener((c) => {
   if (c.log) renderLog();

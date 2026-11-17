@@ -50,10 +50,12 @@ rsync -av ~/Downloads/LOCKED-OUT/EP01/clips/ "/Volumes/MAC/NEW DRAM/production/E
 
 The same extension now makes still images on Firefly's image page, one prompt bar for both.
 
-- **What it does for each image job:** switches the bar to **Image**, picks the job's model, aspect ratio and resolution, attaches its reference pictures (up to 16; none means text to image), types the prompt, presses Generate, waits for that image in Firefly's results by the start of its prompt, and downloads it straight away under the job's name: `Downloads/LOCKED-OUT/<episode>/firefly-images/<id>.png`.
+- **What it does for each image job:** switches the bar to **Image**, picks the model, aspect ratio, resolution and quality, attaches the job's reference pictures (up to 16; none means text to image), types the prompt, presses Generate, waits for that image in Firefly's results by its prompt, and downloads it straight away under the job's name: `Downloads/LOCKED-OUT/<episode>/firefly-images/<id>.png`.
+- **Settings in the popup (the "Images:" row):** Model, Aspect, Size (1K, 2K, 4K), Quality (Low, Medium, High, Extra High, Max) and **Unlimited models only**. They apply to every image job. A job can override one by listing it in its file (`model`, `aspect`, `resolution`, `quality`); leave them out to let the popup decide.
+- **Quality** only exists on the GPT Image 2.5 and 2.6 models. On other models it is skipped and the log says "model has no quality setting".
+- **Paid models:** with **Unlimited models only** ticked, an image runs only when Firefly's cost badge says Unlimited access; otherwise it stops before Generate and nothing is spent. Untick it to allow models that spend credits. The popup line then says PAID MODELS ALLOWED. On 17 November 2026 all 12 models showed Unlimited access on this plan once a prompt was in.
 - **Speed:** about 20 to 40 seconds per image, and several run at once. Two jobs whose prompts begin the same way never run at the same time, so results cannot be swapped.
-- **Cost guard:** by default it only runs on models your plan shows as **Unlimited access**, and stops with a note otherwise. GPT Image 2.6 Flare showed Unlimited access on 17 November 2026.
-- **Models** (name as Firefly shows it, or its id): Firefly Image 5, Firefly Image 4, GPT Image 2, GPT Image 2.5 Flare, GPT Image 2.5 Sunburst, GPT Image 2.6 Flare, GPT Image 2.6 Sunburst, Gemini Nano Banana 2.1, Gemini 3.1 (Nano Banana 2), Gemini 3.0 (Nano Banana Pro), HUMAIN Image 1, Flux 3 Image. Aspect: 21:9, 16:9, 3:2, 4:3, 5:4, 1:1, 4:5, 3:4, 2:3, 9:16, 9:21, Auto. Resolution: 1K, 2K, 4K.
+- **Models** (name as Firefly shows it, or its id): Firefly Image 5, Firefly Image 4, GPT Image 2, GPT Image 2.5 Flare, GPT Image 2.5 Sunburst, GPT Image 2.6 Flare, GPT Image 2.6 Sunburst, Gemini Nano Banana 2.1, Gemini 3.1 (Nano Banana 2), Gemini 3.0 (Nano Banana Pro), HUMAIN Image 1, Flux 3 Image. Aspect: 21:9, 16:9, 3:2, 4:3, 5:4, 1:1, 4:5, 3:4, 2:3, 9:16, 9:21, Auto.
 
 **Adding image jobs.** List them in `image-jobs.json` in this folder, or in `production/EPxx/firefly-images.json` for an episode:
 
@@ -62,7 +64,7 @@ The same extension now makes still images on Firefly's image page, one prompt ba
   {"id": "4-09-car", "episode": "EP04", "title": "4-09 with the Episode 1 car",
    "prompt": "Edit Image 1. Keep everything ... Change only one thing: ...",
    "refs": ["production/EP04/kling/start-frames/4-09.jpg", "production/EP01/kling/start-frames/1-28.jpg"],
-   "model": "GPT Image 2.6 Flare", "aspect": "16:9", "resolution": "2K"}
+   "quality": "Max"}
 ]
 ```
 

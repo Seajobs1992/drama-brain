@@ -36,7 +36,7 @@ for ep, rel in EPISODES:
 # ---- image jobs (text to image, image to image) ----
 # From image-jobs.json in this folder and from production/EPxx/firefly-images.json. Each entry:
 #   {"id": "4-09-car", "episode": "EP04", "prompt": "...", "refs": ["production/EP01/kling/start-frames/1-28.jpg"],
-#    "model": "GPT Image 2.6 Flare", "aspect": "16:9", "resolution": "2K", "title": "short label"}
+#    "model": "GPT Image 2.6 Flare", "aspect": "16:9", "resolution": "2K", "quality": "Max", "title": "short label"}
 # refs are paths under the movie folder (or absolute); none means text to image. model, aspect and resolution fall
 # back to the extension's Settings. The result saves to Downloads/LOCKED-OUT/<episode>/firefly-images/<id>.<png|jpg>.
 def image_sources():
@@ -62,7 +62,7 @@ for it in image_sources():
         shutil.copy2(src, os.path.join(HERE, "jobs", "frames", rel))
         refs.append(rel)
     images.append({"id": it["id"], "episode": ep, "type": "image", "title": it.get("title") or it["prompt"][:50], "prompt": it["prompt"].strip(),
-                   "refs": refs, "model": it.get("model"), "aspect": it.get("aspect"), "resolution": it.get("resolution"),
+                   "refs": refs, "model": it.get("model"), "aspect": it.get("aspect"), "resolution": it.get("resolution"), "quality": it.get("quality"),
                    "output": f"LOCKED-OUT/{ep}/firefly-images/{it['id']}.auto"})
 out += images
 print(f"{len(images)} image jobs" + (f"; skipped: {bad}" if bad else ""))
