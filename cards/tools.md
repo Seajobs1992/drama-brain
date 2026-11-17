@@ -18,3 +18,6 @@ keywords: extension, popup, runner code, build_jobs, script bug, chrome, browser
 - New lesson: `brain.py lesson`. New general document: copy it into `library/` and add it to `docs.json`.
 - New movie: `brain.py new-project "<folder>" "<Name>"`. New computer: copy the brain folder, then `python3 brain.py install`.
 - Only the user turns the gate off, by creating a file named `OFF` in the brain folder.
+
+## Learned the hard way
+- 2026-11-17: Told the user the brain was complete when the Flow runner extension was not in it, only its guide. When packaging the workflow for another computer, list every tool the workflow needs and say plainly which ones are included and which are not.
