@@ -1,0 +1,8 @@
+[
+  {
+    "_about": "The Flow runner Chrome extension. Its working copy (the master, loaded in Chrome) is in the LOCKED OUT folder on the first Mac. `sync` copies its code here whenever that folder is reachable, so the brain always carries the current extension. The jobs folder (the movie's frames, cast pictures and prompts) is never copied: each computer builds it from its own movie folder.",
+    "from": "/Volumes/MAC/NEW DRAM/tools/flow-runner",
+    "to": "tools/flow-runner",
+    "exclude": ["jobs", "popup-preview.jpg"]
+  }
+]

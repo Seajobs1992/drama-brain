@@ -3,3 +3,4 @@ OFF
 __pycache__/
 *.tmp*
 .DS_Store
+tools/*/jobs/

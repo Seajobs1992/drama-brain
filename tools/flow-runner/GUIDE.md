@@ -223,3 +223,21 @@ An assistant with access to the files can do steps 1 to 4 without the popup exce
 ## 9. File map
 
 `manifest.json` permissions: downloads, storage, debugger; host flow.google.com. `popup.html`, `popup.js` the window. `bridge.js` the loop. `agent.js` the page driver (every Flow control it uses is named in a comment with the date it was mapped). `background.js` files, download naming, genuine clicks and keys, report writing. `build_jobs.py` the builder (EPISODES, CAST, ASSETS, flow-fixes). `move_clips.sh` moves results into the project. `README.md` the short version; `GUIDE.md` this file. `../firefly-kling-runner/` is the earlier runner for Kling 3.0 in Adobe Firefly, same popup pattern.
+
+## 10. On another computer
+
+The extension's code travels inside the Drama Brain (`~/drama-brain/tools/flow-runner`). The movie itself does not: the `jobs` folder (start frames, cast pictures, prompts) is built on each computer from that computer's copy of the movie folder.
+
+1. Get the brain on that computer (see the brain's README, "Another computer").
+2. In the Chrome you will use for Flow: `chrome://extensions`, turn on **Developer mode**, **Load unpacked**, choose `~/drama-brain/tools/flow-runner`. Pin it.
+3. Build the jobs from the movie folder on that computer, then reload the extension:
+   `python3 ~/drama-brain/tools/flow-runner/build_jobs.py "<movie folder>"`
+   The movie folder is the one that holds `production/EPxx`. Without it there is nothing to tick: bring the movie folder across on its drive first.
+4. Sign in to Google Flow with the same account. Flow projects and their characters belong to the account, so they are already there; a new Flow project needs its characters created again (step 1 in the popup).
+5. Clips download into Chrome's download folder under `LOCKED-OUT/EPxx/`. To move them into the movie folder:
+   `FLOW_DOWNLOADS="<Chrome's download folder>/LOCKED-OUT" MOVIE_DIR="<movie folder>" ./move_clips.sh`
+
+The working copy (the master) is the one in the LOCKED OUT folder on the first Mac. The brain copies it on every `sync` from that Mac, so change the extension there. A change made only in the brain's copy on another computer is overwritten by the next sync.
+
+The episode list, cast and voices in `build_jobs.py` are LOCKED OUT's. For another movie, edit `EPISODES`, `CAST` and `ASSETS` at the top of that file (section 3).
+

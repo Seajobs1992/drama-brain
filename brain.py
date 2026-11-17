@@ -564,6 +564,9 @@ def cmd_doctor(_):
             if w != "project" and w not in cards:
                 ok = line(False, "card %s names a companion that does not exist: %s" % (n, w))
     line(True, "%d cards, %d general documents, %d movie(s)" % (len(cards), len(GENERAL_DOCS), len(roots())))
+    stale = mirrors(False)
+    ok &= line(not stale, "tools carried in the brain match their working copies" if not stale else
+               "tools changed since the brain last copied them (%s)  -> run: sync" % ", ".join(stale))
     if has_remote():
         g = lambda *a: subprocess.run(["git", "-C", HERE] + list(a), capture_output=True, text=True).stdout.strip()
         dirty = bool(g("status", "--porcelain"))
@@ -579,6 +582,28 @@ def cmd_doctor(_):
     if os.path.exists(err) and os.path.getsize(err):
         line(False, "the gate logged errors: %s" % err)
     print("All good." if ok else "Something needs attention (lines marked FIX).")
+
+
+def mirrors(apply):
+    """Tools whose working copy lives elsewhere on this computer (mirrors.json). Returns the files that differ;
+    with apply=True it copies them in. Top-level files only, minus the excluded names."""
+    changed = []
+    for m in load_json(os.path.join(HERE, "mirrors.json"), []):
+        src, dst = m.get("from", ""), os.path.join(HERE, m.get("to", ""))
+        if not os.path.isdir(src):
+            continue                                             # the master is on another computer or drive
+        skip = set(m.get("exclude", []))
+        for f in sorted(os.listdir(src)):
+            s, d = os.path.join(src, f), os.path.join(dst, f)
+            if f in skip or f.startswith(".") or not os.path.isfile(s):
+                continue
+            same = os.path.exists(d) and open(s, "rb").read() == open(d, "rb").read()
+            if not same:
+                changed.append(os.path.join(m.get("to", ""), f))
+                if apply:
+                    os.makedirs(dst, exist_ok=True)
+                    shutil.copy2(s, d)
+    return changed
 
 
 def has_remote():
@@ -607,6 +632,9 @@ def cmd_sync(_):
     if not os.path.isdir(os.path.join(HERE, ".git")):
         print("The brain folder is not a git repository yet. Without one, copy the folder to the other computer by hand.")
         return 1
+    got = mirrors(True)
+    if got:
+        print("tools refreshed from their working copies: %s" % ", ".join(got))
     git("add", "-A")
     c = git("commit", "-m", "brain update " + time.strftime("%Y-%m-%d %H:%M"))
     print("saved locally" if c.returncode == 0 else "nothing new to save")

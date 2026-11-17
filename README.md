@@ -47,6 +47,7 @@ The brain has a private online copy on GitHub, named `drama-brain`, under your a
 2. Run `python3 ~/drama-brain/brain.py install`. It connects Claude and Codex on that computer and installs the writing skill.
 3. Register the movie folders that exist on that computer: `brain.py add-project "<folder>"`. A movie folder copied from this computer already has its `BRAIN-PROJECT.md`.
 4. Open Codex once and approve the new hooks when it asks.
+5. Load the Flow runner extension in Chrome and build its jobs (see "The Flow runner extension" below).
 
 Keeping the two computers in step:
 
@@ -55,6 +56,15 @@ Keeping the two computers in step:
 - After you edit a card by hand, or if `doctor` says the copies are out of step, run `python3 ~/drama-brain/brain.py sync`.
 
 The `local/` folder is per computer (which movie folders exist here, session notes) and is never copied.
+
+## The Flow runner extension
+
+The Chrome extension that runs frames and clips in Google Flow travels inside the brain, at `tools/flow-runner`, with its full guide (`tools/flow-runner/GUIDE.md`).
+
+- **What is in the brain:** the extension's code and guide.
+- **What is not:** the `jobs` folder, which holds the movie's start frames, cast pictures and prompts. It is built on each computer from the movie folder, and it is never sent online.
+- **On another computer:** in Chrome open `chrome://extensions`, turn on Developer mode, press Load unpacked and choose `~/drama-brain/tools/flow-runner`. Then build the jobs from the movie folder on that computer: `python3 ~/drama-brain/tools/flow-runner/build_jobs.py "<movie folder>"`. The guide's section 10 has every step.
+- **Changing the extension:** the working copy is the one in the LOCKED OUT folder on the first Mac (`mirrors.json` names it). `sync` on that Mac copies it into the brain.
 
 ## Turning it off
 

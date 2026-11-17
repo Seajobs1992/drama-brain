@@ -1,0 +1,17 @@
+{
+  "manifest_version": 3,
+  "name": "LOCKED OUT Flow Runner",
+  "version": "1.0.0",
+  "description": "Runs each LOCKED OUT clip in Google Flow (start frame as an Ingredient, prompt, length, x1), generates, waits, and downloads the 1080p upscale under the clip's name.",
+  "permissions": ["downloads", "storage", "debugger"],
+  "host_permissions": ["https://flow.google.com/*"],
+  "background": { "service_worker": "background.js" },
+  "action": { "default_popup": "popup.html", "default_title": "LOCKED OUT Flow runner" },
+  "content_scripts": [
+    { "matches": ["https://flow.google.com/*"], "js": ["agent.js"], "world": "MAIN", "run_at": "document_idle" },
+    { "matches": ["https://flow.google.com/*"], "js": ["bridge.js"], "run_at": "document_idle" }
+  ],
+  "web_accessible_resources": [
+    { "resources": ["jobs/*", "jobs/frames/*/*", "jobs/cast/*", "jobs/assets/*"], "matches": ["https://flow.google.com/*"] }
+  ]
+}

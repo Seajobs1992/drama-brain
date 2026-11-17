@@ -1,0 +1,211 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  :root {
+    --bg:#14181F; --surface:#1C222B; --raised:#242B36; --line:#2E3744; --line2:#3A4555;
+    --text:#E8ECF2; --muted:#8E99A8; --faint:#5F6B7A;
+    --brass:#C9A24A; --brass2:#E0B85C; --brass-ink:#1A1405;
+    --ok:#4DB37E; --warn:#D9A441; --bad:#E06559; --info:#6EA4FF;
+    --r-s:6px; --r-m:10px; --r-l:14px;
+    --font:"Avenir Next", "Helvetica Neue", system-ui, -apple-system, sans-serif;
+    --cond:"Avenir Next Condensed", "Avenir Next", system-ui, sans-serif;
+    --mono:ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  * { box-sizing:border-box; }
+  html, body { margin:0; }
+  body { width:640px; height:584px; overflow:hidden; display:flex; flex-direction:column; background:var(--bg); color:var(--text); font:13px/1.45 var(--font); -webkit-font-smoothing:antialiased; }
+  button, select { font:inherit; color:var(--text); background:var(--raised); border:1px solid var(--line); border-radius:var(--r-s); padding:6px 11px; transition:background .12s, border-color .12s, transform .06s; }
+  button { cursor:pointer; }
+  button:hover { background:#2B3340; border-color:var(--line2); }
+  button:active { transform:translateY(1px); }
+  button:disabled { opacity:.38; cursor:not-allowed; transform:none; }
+  button:focus-visible, select:focus-visible, input:focus-visible, textarea:focus-visible { outline:2px solid var(--brass); outline-offset:1px; }
+  select { padding-right:26px; appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%238E99A8' stroke-width='1.5'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 9px center; }
+  .quiet { background:transparent; border-color:transparent; color:var(--muted); }
+  .quiet:hover { color:var(--text); background:var(--raised); border-color:transparent; }
+  .brass { background:var(--brass); border-color:var(--brass); color:var(--brass-ink); font-weight:600; padding:8px 16px; border-radius:var(--r-m); }
+  .brass:hover { background:var(--brass2); border-color:var(--brass2); }
+  .danger { color:var(--bad); border-color:transparent; background:transparent; }
+  .danger:hover { background:rgba(224,101,89,.12); border-color:transparent; }
+
+  /* header */
+  .hdr { display:flex; align-items:center; gap:14px; padding:10px 16px 8px; border-bottom:1px solid var(--line); }
+  .mark { font:600 17px/1 var(--cond); letter-spacing:.06em; white-space:nowrap; }
+  .mark small { font:500 12px/1 var(--font); letter-spacing:0; color:var(--muted); margin-left:8px; }
+  .proj { margin-left:auto; display:flex; align-items:center; gap:7px; font-size:12px; color:var(--muted); max-width:210px; white-space:nowrap; overflow:hidden; }
+  .proj span:last-child { overflow:hidden; text-overflow:ellipsis; }
+  .proj .dot { width:7px; height:7px; border-radius:50%; background:var(--faint); flex:none; }
+  .proj.ok .dot { background:var(--ok); } .proj.ok { color:var(--text); }
+  .proj.bad .dot { background:var(--warn); } .proj.bad { color:var(--warn); }
+  .proj.live .dot { background:var(--brass); animation:pulse 1.6s ease-in-out infinite; }
+  @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:.35; } }
+  @media (prefers-reduced-motion: reduce) { .proj.live .dot { animation:none; } .pane { transition:none !important; } }
+  #episode { min-width:150px; max-width:200px; overflow:hidden; text-overflow:ellipsis; }
+
+  /* stepper */
+  .steps { display:flex; align-items:stretch; padding:0 8px; border-bottom:1px solid var(--line); background:var(--surface); }
+  .step { flex:1; display:flex; align-items:center; gap:8px; padding:9px 6px; cursor:pointer; border-bottom:2px solid transparent; color:var(--muted); user-select:none; }
+  .step:hover { color:var(--text); }
+  .step .num { width:22px; height:22px; border-radius:50%; border:1.5px solid var(--line2); display:grid; place-items:center; font:600 12px/1 var(--cond); color:var(--muted); flex:none; }
+  .step .lbl { font-weight:600; font-size:13px; line-height:1.15; color:inherit; }
+  .step .sub { font-size:11px; color:var(--faint); line-height:1.2; white-space:nowrap; }
+  .step.active { color:var(--text); border-bottom-color:var(--brass); }
+  .step.active .num { background:var(--brass); border-color:var(--brass); color:var(--brass-ink); }
+  .step.done .num { border-color:var(--ok); color:var(--ok); }
+  .step.done .sub { color:var(--ok); }
+  .aside { display:flex; align-items:center; gap:2px; padding:0 4px; }
+  .aside .step { flex:none; gap:0; padding:9px 10px; }
+
+  /* panes */
+  .body { flex:1; min-height:0; position:relative; }
+  .pane { position:absolute; inset:0; display:flex; flex-direction:column; opacity:0; pointer-events:none; transition:opacity .12s ease; }
+  .pane.active { opacity:1; pointer-events:auto; }
+  .purpose { padding:8px 16px 2px; color:var(--muted); font-size:12px; line-height:1.4; }
+  .purpose b { color:var(--text); font-weight:600; }
+  .tickrow { display:flex; align-items:center; gap:4px; padding:4px 16px 6px; font-size:12px; color:var(--muted); }
+  .tickrow .lead { margin-right:4px; }
+  .tickrow .right { margin-left:auto; color:var(--muted); display:flex; gap:6px; align-items:center; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; justify-content:flex-end; }
+  .seg { display:inline-flex; border:1px solid var(--line); border-radius:var(--r-s); overflow:hidden; }
+  .seg { flex:none; }
+  .seg button { border:0; border-radius:0; padding:4px 10px; font-size:12px; background:transparent; color:var(--muted); white-space:nowrap; }
+  .seg button + button { border-left:1px solid var(--line); }
+  .seg button:hover { color:var(--text); background:var(--raised); }
+
+  .list { flex:none; height:150px; overflow:auto; margin:0 16px; border:1px solid var(--line); border-radius:var(--r-m); background:var(--surface); scrollbar-width:thin; scrollbar-color:var(--line2) transparent; }
+  .row { display:grid; grid-template-columns:16px 46px 50px 1fr auto; gap:9px; align-items:center; padding:4px 10px 4px 10px; border-top:1px solid #222935; cursor:pointer; min-height:36px; }
+  .row:first-child { border-top:0; }
+  .row:hover { background:#202733; } .row.active { background:#283042; box-shadow:inset 3px 0 0 var(--brass); }
+  .row input { width:14px; height:14px; accent-color:var(--brass); margin:0; }
+  .row .th { width:46px; height:26px; border-radius:4px; object-fit:cover; background:#0E1116; display:block; }
+  .row .th.ph { visibility:hidden; }
+  .row b { font:600 13px/1 var(--cond); letter-spacing:.02em; }
+  .row .t { color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-size:12.5px; }
+  .row .t .edited { color:var(--warn); margin-left:6px; font-size:11px; }
+  .row.empty { grid-template-columns:1fr; color:var(--muted); cursor:default; padding:14px 12px; }
+  .pill { font-size:11px; padding:2px 8px 2px 7px; border-radius:999px; border:1px solid var(--line); color:var(--muted); white-space:nowrap; max-width:170px; overflow:hidden; text-overflow:ellipsis; display:inline-flex; align-items:center; gap:5px; }
+  .pill::before { content:""; width:6px; height:6px; border-radius:50%; background:currentColor; flex:none; }
+  .pill.none { display:none; }
+  .pill.done { color:var(--ok); border-color:rgba(77,179,126,.35); }
+  .pill.err { color:var(--bad); border-color:rgba(224,101,89,.35); }
+  .pill.busy { color:var(--warn); border-color:rgba(217,164,65,.35); }
+  .pill.have { color:var(--info); border-color:rgba(110,164,255,.35); }
+
+  .panel { flex:1; min-height:0; margin:8px 16px 0; padding:9px 11px; border:1px solid var(--line); border-radius:var(--r-l); background:var(--surface); display:flex; flex-direction:column; overflow:auto; scrollbar-width:thin; scrollbar-color:var(--line2) transparent; }
+  .dhead { display:flex; gap:12px; align-items:flex-start; }
+  .dhead img { width:148px; aspect-ratio:16/9; object-fit:cover; border-radius:var(--r-s); background:#0E1116; flex:none; }
+  .dmeta { min-width:0; flex:1; }
+  .dmeta .ttl { font:600 14px/1.2 var(--cond); letter-spacing:.02em; margin-bottom:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:flex; align-items:center; }
+  .facts { display:grid; grid-template-columns:max-content 1fr; gap:1px 10px; font-size:11.5px; line-height:1.35; }
+  .facts .k { color:var(--faint); } .facts .v { color:var(--text); min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .facts .v.wrap { white-space:normal; }
+  textarea { flex:none; height:58px; margin-top:3px; width:100%; resize:none; font:12px/1.45 var(--mono); color:var(--text); background:#10141A; border:1px solid var(--line); border-radius:var(--r-s); padding:6px 8px; }
+  .plabel { margin-top:7px; font-size:11.5px; color:var(--muted); }
+  .plabel.draft { color:var(--warn); }
+  .tiny { font-size:11px; padding:2px 8px; margin-left:8px; vertical-align:middle; font-family:var(--font); letter-spacing:0; }
+
+  .foot { display:flex; align-items:center; gap:8px; padding:10px 16px; border-top:1px solid var(--line); background:var(--bg); }
+  .foot .hint { color:var(--muted); font-size:12px; margin-left:auto; text-align:right; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  #msg { position:absolute; left:16px; right:16px; bottom:62px; padding:8px 12px; background:#3A2F14; border:1px solid rgba(217,164,65,.5); color:#F2D58A; border-radius:var(--r-m); font-size:12px; z-index:3; }
+  #msg:empty { display:none; }
+
+  /* settings & log */
+  .sheet { flex:1; overflow:auto; padding:6px 16px 12px; }
+  .sheet h3 { font:600 13px/1 var(--cond); letter-spacing:.06em; color:var(--muted); margin:14px 0 8px; }
+  .set { display:grid; grid-template-columns:200px 1fr; gap:2px 14px; align-items:center; padding:7px 0; border-top:1px solid #1F2630; }
+  .set:first-of-type { border-top:0; }
+  .set .k { font-weight:500; } .set .v { display:flex; gap:8px; align-items:center; }
+  .set .why { grid-column:1 / 3; color:var(--muted); font-size:11.5px; line-height:1.35; }
+  .sw { position:relative; width:34px; height:20px; flex:none; }
+  .sw input { opacity:0; width:0; height:0; position:absolute; }
+  .sw i { position:absolute; inset:0; background:var(--line2); border-radius:999px; transition:background .12s; }
+  .sw i::after { content:""; position:absolute; top:2px; left:2px; width:16px; height:16px; border-radius:50%; background:#fff; transition:transform .12s; }
+  .sw input:checked + i { background:var(--brass); } .sw input:checked + i::after { transform:translateX(14px); }
+  #log { height:100%; margin:0; background:#10141A; border:1px solid var(--line); border-radius:var(--r-m); padding:8px 10px; font:11.5px/1.5 var(--mono); color:#C6CDD6; white-space:pre-wrap; overflow:auto; }
+  .logwrap { flex:1; min-height:0; margin:6px 16px 0; }
+</style>
+</head>
+<body>
+  <div class="hdr">
+    <div class="mark">LOCKED OUT<small>Flow runner</small></div>
+    <select id="episode" title="Episode"></select>
+    <div class="proj" id="where"><span class="dot"></span><span id="whereText">Checking the tab…</span></div>
+    <button id="stop" class="danger" title="Stop after the current step">Stop</button>
+  </div>
+
+  <div class="steps">
+    <div class="step" data-tab="cast"><span class="num">1</span><div><div class="lbl">Characters</div><div class="sub" id="nCast"></div></div></div>
+    <div class="step" data-tab="upload"><span class="num">2</span><div><div class="lbl">Uploads</div><div class="sub" id="nUpload"></div></div></div>
+    <div class="step" data-tab="image"><span class="num">3</span><div><div class="lbl">Frames</div><div class="sub" id="nImage"></div></div></div>
+    <div class="step" data-tab="video"><span class="num">4</span><div><div class="lbl">Clips</div><div class="sub" id="nVideo"></div></div></div>
+    <div class="aside">
+      <div class="step" data-tab="log"><div class="lbl">Log</div></div>
+      <div class="step" data-tab="settings"><div class="lbl">Settings</div></div>
+    </div>
+  </div>
+
+  <div class="body">
+    <div id="msg"></div>
+
+    <div class="pane" id="pane-cast">
+      <div class="purpose"><b>Who is in this episode.</b> Each character is made once per Flow project from the approved picture, with a name and a Flow voice. Flow then speaks with that voice whenever the character is in a clip. Free.</div>
+      <div class="tickrow"><span class="lead">Tick</span><span class="seg"><button data-tick="cast-all">Everyone</button><button data-tick="cast-missing">Not yet in project</button><button data-tick="cast-none">None</button></span><span class="right"><button class="quiet" id="castCheck">What is in the project?</button></span></div>
+      <div class="list" id="list-cast"></div>
+      <div class="panel" style="justify-content:center"><div class="purpose" style="padding:0" id="note-cast"></div></div>
+      <div class="foot"><button id="run-cast" class="brass">Create ticked characters</button><span class="hint">Keep the Flow tab in front while it runs</span></div>
+    </div>
+
+    <div class="pane" id="pane-upload">
+      <div class="purpose"><b>Pictures the frames are built from.</b> The episode's scene masters, references and props go into the Flow project under their names, once. Only needed if you make frames in Flow. Free.</div>
+      <div class="tickrow"><span class="lead">Tick</span><span class="seg"><button data-tick="upload-all">All</button><button data-tick="upload-todo">Not done</button><button data-tick="upload-none">None</button></span></div>
+      <div class="list" id="list-upload"></div>
+      <div class="panel" id="detail-upload"></div>
+      <div class="foot"><button id="run-upload" class="brass">Upload ticked</button><span class="hint" id="note-upload"></span></div>
+    </div>
+
+    <div class="pane" id="pane-image">
+      <div class="purpose"><b>Start frames made inside Flow</b> (optional, 0 credits). One image per frame in the shot plan, from the master and the characters, named after the frame in Flow and saved to your computer. The prompts are drafts from the shot plan: read and edit each before running.</div>
+      <div class="tickrow"><span class="lead">Tick</span><span class="seg"><button data-tick="image-all">All</button><button data-tick="image-todo">Not done</button><button data-tick="image-rejected">Rejected</button><button data-tick="image-none">None</button></span><span class="right" id="count-image"></span></div>
+      <div class="list" id="list-image"></div>
+      <div class="panel" id="detail-image"></div>
+      <div class="foot"><button id="check-image" class="quiet">Check in Flow first</button><button id="run-image" class="brass">Make ticked frames</button><span class="hint" id="note-image">0 credits</span></div>
+    </div>
+
+    <div class="pane" id="pane-video">
+      <div class="purpose"><b>Animate the clips.</b> Each clip takes its start frame and its characters, says the exact line from the script, and runs at the scripted length, one take. Finished clips download in 1080p. Try one clip first.</div>
+      <div class="tickrow"><span class="lead">Tick</span><span class="seg"><button data-tick="video-all">All</button><button data-tick="video-todo">Not done</button><button data-tick="video-dialogue">With dialogue</button><button data-tick="video-rejected">Rejected</button><button data-tick="video-none">None</button></span><span class="right" id="count-video"></span></div>
+      <div class="list" id="list-video"></div>
+      <div class="panel" id="detail-video"></div>
+      <div class="foot"><button id="check-video" class="quiet">Check in Flow first</button><button id="run-video" class="brass">Animate ticked clips</button><button id="regen-video" class="quiet" title="Another take of the ticked clips, even if already downloaded. Earlier takes are kept.">Another take</button><span class="hint" id="note-video"></span></div>
+    </div>
+
+    <div class="pane" id="pane-log">
+      <div class="purpose"><b>What happened</b>, the same lines as the banner on the Flow page. A failed item says which one and why.</div>
+      <div class="tickrow"><button id="saveReport" title="Writes LOCKED-OUT/EPxx/flow-report.json: every status, each rejection with Flow's words and the prompt it refused, and the settings. Give it to Claude or Codex to write the fixes.">Save report for this episode</button><span class="right"><button class="quiet" id="resetTicked" title="Forget the status of the ticked items so they can run again">Forget status of ticked</button><button class="quiet" id="clearLog">Clear log</button></span></div>
+      <div class="logwrap"><div id="log"></div></div>
+      <div class="foot"><span class="hint" style="margin-left:0">Files land in Downloads/LOCKED-OUT/… and can be moved into the project with move_clips.sh</span></div>
+    </div>
+
+    <div class="pane" id="pane-settings">
+      <div class="sheet">
+        <h3>Clips</h3>
+        <div class="set"><div class="k">Video model</div><div class="v"><select id="model"><option>Omni 1.2 Flash</option><option>Veo 3.1 - Lite</option><option>Veo 3.1 - Fast</option><option>Veo 3.1 - Quality</option></select></div><div class="why">Omni makes 3 to 15 s clips at about 3 credits a second. Veo makes fixed 8 s clips with better lip sync and costs more; Fast and Quality leave Flow on 5 December.</div></div>
+        <div class="set"><div class="k">Start frame for a clip</div><div class="v"><select id="frameSource"><option value="file">the approved file</option><option value="flow">the frame made in Flow, if there is one</option></select></div><div class="why">The approved file is the frame in kling/start-frames, uploaded once and reused. The Flow-made frame is the image from step 3 with the same id; when there is none, the file is used.</div></div>
+        <div class="set"><div class="k">Characters in clips</div><div class="v"><label class="sw"><input type="checkbox" id="useChars" checked><i></i></label><span>attach the clip's cast, so their Flow voices speak</span></div><div class="why">When on, the written voice description is dropped from the prompt so it does not fight the character's voice. Needs step 1 done in this project.</div></div>
+        <div class="set"><div class="k">Download</div><div class="v"><select id="quality"><option value="1080p">1080p upscaled, free</option><option value="720p">720p original</option></select></div></div>
+        <div class="set"><div class="k">Stop if a clip costs more than</div><div class="v"><select id="maxCredits"><option>20</option><option selected>30</option><option>50</option><option>120</option></select><span>credits</span></div><div class="why">Checked against Flow's own price before anything is spent.</div></div>
+        <div class="set"><div class="k">Clips generating at once</div><div class="v"><select id="maxActive"><option>1</option><option>2</option><option selected>3</option><option>5</option></select></div></div>
+        <div class="set"><div class="k">Give up on a clip after</div><div class="v"><select id="timeout"><option>10</option><option selected>15</option><option>25</option><option>40</option></select><span>minutes</span></div></div>
+        <h3>Frames made in Flow</h3>
+        <div class="set"><div class="k">Image model</div><div class="v"><select id="imageModel"><option>Nano Banana 2.1</option><option>Nano Banana Pro</option><option>Nano Banana 2 Lite</option></select></div></div>
+        <div class="set"><div class="k">After a frame is made</div><div class="v"><select id="downloadImages"><option value="yes">download it too</option><option value="no">keep it in Flow only</option></select></div></div>
+        <h3>Always</h3>
+        <div class="set"><div class="why" style="grid-column:1/3; padding-top:0">16:9, 720p, one take, clip length from the script. Flow accepts Start for images and a character's name only from a real click and real keys, which the extension sends through Chrome's debugging channel: keep the Flow tab in front, and expect Chrome's short "started debugging this browser" bar.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
