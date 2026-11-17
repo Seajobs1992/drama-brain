@@ -1,0 +1,21 @@
+{
+  "_about": "What the gate lets through. free_tools never need the brain (they only read, plan or talk). Everything else is blocked until the session has loaded a card. spend rules also need the named cards.",
+  "max_cards_per_task": 2,
+  "card_token_limit": 600,
+  "section_char_limit": 8000,
+  "free_tools": "^(Read|Grep|Glob|LS|NotebookRead|ToolSearch|WebSearch|WebFetch|TodoWrite|TodoRead|TaskCreate|TaskUpdate|TaskList|TaskGet|TaskStop|TaskOutput|AskUserQuestion|Skill|ListAgents|SendMessage|ReadNotifications|EnterPlanMode|ExitPlanMode|ScheduleWakeup|ListMcpResourcesTool|ReadMcpResourceTool|update_plan|view_image|list_mcp_resources|read_mcp_resource|request_user_input)$|^mcp__ccd_|^mcp__terminal__(read|list)",
+  "spend": [
+    {
+      "tool": "^mcp__.+__(generate_(image|video|audio|music|speech|3d|gaussian_world)(_batch)?|edit_video|extend_video|upscale_(image|video)|swap_face|motion_control|clone_voice|reframe_video|translate_video|creative_(generate_.+|edit_image|design_voice|run_flow_nodes)|vidiq_(generate_.+|voiceover_generate|edit_media|motion_graphics))$",
+      "cards": ["credits"]
+    },
+    {
+      "tool": "^mcp__flow__.*(generate|animate|create|run|submit).*",
+      "cards": ["credits", "clips"]
+    },
+    {
+      "bash": "(runfix|runclips)\\.mjs",
+      "cards": ["credits", "clips"]
+    }
+  ]
+}

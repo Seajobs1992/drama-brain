@@ -1,0 +1,21 @@
+# Lessons
+
+Every correction the user had to make, newest last. Cards are updated from these.
+
+- 2026-11-15 [LOCKED OUT] (references) Wrote my own character-sheet prompt. The user has a fixed three-panel template: use it word for word, built from an identity image.
+- 2026-11-15 [LOCKED OUT] (references) Faces came out plastic because of my prompt words ("soft even light", "film still"). Use the realistic-skin rules; frame identity faces large.
+- 2026-11-15 [LOCKED OUT] (references) Picked a character's face and ethnicity myself. The user chooses every face from an options board.
+- 2026-11-15 [LOCKED OUT] (references) A carried bag changed between images. Every carried prop gets its own locked reference and is checked like a face.
+- 2026-11-15 [LOCKED OUT] (frames) Mirrored frame 1-14 to fix hands and did not say so. Never mirror or flip; regenerate, and disclose every local edit.
+- 2026-11-15 [LOCKED OUT] (credits) Wrote invented task IDs into the log. Log the real ID only after the tool returns it.
+- 2026-11-16 [LOCKED OUT] (credits) Made two takes of every item and wasted about 2,700 credits. One take only.
+- 2026-11-16 [LOCKED OUT] (frames) Put a RIGHT-brow injury on the wrong side when the head turned. It sits over the eye nearer the LEFT edge of the picture.
+- 2026-11-16 [LOCKED OUT] (frames) Over-the-shoulder shot 1-29 had the wrong person in the foreground. The foreground person is the listener.
+- 2026-11-16 [LOCKED OUT] (clips) Offered to generate from chat. The user prefers the extension: they tick, fill, generate and download.
+- 2026-11-16 [LOCKED OUT] (clips) Used ElevenLabs and music. Google Flow voices only; effects yes; music never inside a clip.
+- 2026-11-17 [LOCKED OUT] (frames) EP02 2-15 showed a different shop: its master was side-on and never compared with the location authority or EP01's wide. The rule already existed; I did not apply it.
+- 2026-11-17 [LOCKED OUT] (clips) "Key with a red bow" became a ribbon, and the key appeared from nowhere. Describe props by shape and include the action the shot plan asks for.
+- 2026-11-17 [LOCKED OUT] (clips) Flow invented the foreground person in over-the-shoulder clips (a boy, a stranger). Name that person and attach them as a silent character.
+- 2026-11-17 [LOCKED OUT] (clips) Checked only the words of each clip overnight. Compare every clip's picture with its start frame before the edit.
+- 2026-11-17 [LOCKED OUT] (credits) Ran a paid clip on stale extension code (12 credits) and animated three inserts before fixing their frames (27 credits). Confirm new code is live; fix the frame before animating.
+- 2026-11-17 [general] (review) Told the user a rule might be missing when it was in the continuity file and the director's checklist. Search the brain before saying a rule does not exist.

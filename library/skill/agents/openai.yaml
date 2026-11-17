@@ -1,0 +1,4 @@
+interface:
+  display_name: "AI Microdrama Director"
+  short_description: "Genre-aware scripts, hooks and Flow shot direction"
+  default_prompt: "Use $ai-microdrama-director to develop my brief into an original episode with a strong hook, earned payoff and filmable shot plan."
