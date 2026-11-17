@@ -28,3 +28,6 @@ Clips are made in Google Flow through the user's Flow runner extension. Guide: d
 - For EVERY clip, compare stills from the clip with its start frame: set, positions, props, gloves and bags, the foreground person.
 - Check the words of every clip against the script. Both checks, every clip. A word check alone let a wrong set through.
 - Downloads are matched by their prompt, not by position. After editing the extension, confirm the page's version stamp before spending.
+
+## Learned the hard way
+- 2026-11-17: Flow's grid reuses its tile elements while scrolling, so a mark put on a tile element can end up on a different clip. On EP03 the fetch-by-prompt helper downloaded the same clip ten times under ten names. Fixed in the extension (2026-11-17f): download the tile that was just matched, never one found again by a mark. After any batch download, check the files are all different (md5) and look at a still of each.

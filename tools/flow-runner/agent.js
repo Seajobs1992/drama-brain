@@ -12,7 +12,7 @@
   window.__loFlowAgent = true;
   // Version stamp, checked from outside after a reload so a run never uses stale code (17 Nov 2026: a reload
   // silently failed and 2-15 ran in the wrong mode).
-  document.documentElement.dataset.loflowVersion = "2026-11-17e";
+  document.documentElement.dataset.loflowVersion = "2026-11-17f";
 
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   const norm = (s) => (s || "").replace(/\s+/g, " ").trim();
@@ -572,7 +572,7 @@
         if (done.has(k) || !g.ready) continue;
         done.add(k);
         const p = await promptOf(g);
-        if (p !== null && promptKey(p) === want) { g.el.dataset.loKey = key; return await download(key, 0, quality, kind, undefined, undefined); }
+        if (p !== null && promptKey(p) === want) return await downloadTile(g, quality, kind);
       }
       const top = pc.scrollTop; pc.scrollTop = top + pc.clientHeight * 0.6; await sleep(450);
       if (pc.scrollTop === top) break;
@@ -700,7 +700,7 @@
   // from the newest of its kind. Only rendered tiles are seen here; locate() scrolls for the rest.
   function tileFor(key, pos, kind = "video", name) {
     const list = gens(kind);
-    return list.find((g) => g.el.dataset.loKey === key) || (name && list.find((g) => g.label === name)) || list[pos] || null;
+    return (name && list.find((g) => g.label === name)) || list[pos] || null;   // tile tags are not trusted: Flow reuses tile elements
   }
   // Flow's grid is virtual: it renders only the tiles near the view (about 16). This walks down the grid, keeping
   // every tile's absolute place (its top + scroll), until it reaches the wanted one, and leaves it in view.
@@ -711,7 +711,7 @@
     const seen = new Map();
     for (let step = 0; step < 80; step++) {
       for (const g of gens(kind)) {
-        if (g.el.dataset.loKey === key || (name && g.label === name)) { g.el.scrollIntoView({ block: "center" }); await sleep(300); return g; }
+        if (name && g.label === name) { g.el.scrollIntoView({ block: "center" }); await sleep(300); return g; }
         const r = g.el.getBoundingClientRect();
         const k = `${Math.round(r.top + pc.scrollTop)}:${Math.round(r.left)}`;
         if (!seen.has(k)) seen.set(k, g.label);
@@ -796,7 +796,12 @@
     if (!g0 || !g0.ready) throw new Error("finished tile not found in Flow's grid");
     const g = name ? g0 : await verified(g0, sent);
     if (!g) throw new Error("the finished tile at this clip's place was made from another prompt, and none nearby matches; nothing was downloaded");
-    g.el.dataset.loKey = key;
+    return downloadTile(g, quality, kind);
+  }
+  // Opens one tile's menu and asks for the download. The tile must already be the right one: Flow's grid reuses its
+  // tile elements as it scrolls, so a tile is never found again by a mark left on its element (17 Nov 2026: that sent
+  // ten different EP03 clips to the same file).
+  async function downloadTile(g, quality, kind = "video") {
     g.el.scrollIntoView({ block: "center" });
     const box = g.el.getBoundingClientRect();
     const at = { bubbles: true, clientX: box.x + box.width / 2, clientY: box.y + box.height / 2 };
