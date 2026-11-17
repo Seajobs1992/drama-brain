@@ -1,14 +1,56 @@
 {
-  "skill": {"path": "library/skill/SKILL.md", "about": "The micro-drama writing and directing skill: story engine, episodes, directing, handoff"},
-  "skill-genres": {"path": "library/skill/references/genre-engines.md", "about": "Premises and season shape by genre"},
-  "skill-hooks": {"path": "library/skill/references/hooks-and-episode-chains.md", "about": "Openings, escalation, reveals, cliffhangers"},
-  "skill-dialogue": {"path": "library/skill/references/dialogue-and-payoffs.md", "about": "Voices, subtext, promises and payoffs"},
-  "skill-shots": {"path": "library/skill/references/shots-and-flow.md", "about": "Performance, blocking, continuity, timing, Flow prompts"},
-  "skill-sources": {"path": "library/skill/references/source-lessons-and-review.md", "about": "What the evidence supports, and how to review work"},
-  "checklist": {"path": "library/director-checklist.md", "about": "Director's checklist: before an episode, choosing shots, every prompt, checking every image (written on LOCKED OUT, applies to every movie)", "source": "/Volumes/MAC/NEW DRAM/production/DIRECTOR-CHECKLIST.md"},
-  "skin": {"path": "library/realistic-skin.md", "about": "Prompt words that give real skin, and the words that give plastic faces", "source": "/Volumes/MAC/NEW DRAM/production/PROMPT-RULES-REALISTIC-SKIN.md"},
-  "flow-guide": {"path": "tools/flow-runner/GUIDE.md", "about": "Full guide to producing in Google Flow with the runner extension: set-up, a fresh movie, rejected prompts, the consistency checks (6c), another computer (10)"},
-  "continuity-method": {"path": "library/continuity-method.md", "about": "The visual continuity method: masters, scene maps, prop custody"},
-  "series-continuity": {"path": "library/series-continuity.md", "about": "Model for a series continuity file (cast locks, prop ledger, geography)"},
-  "study": {"path": "library/benchmark-study-untouchable-mechanic.md", "about": "Benchmark study of The Untouchable Mechanic: what its episodes do"}
+ "skill": {
+  "path": "library/skill/SKILL.md",
+  "about": "The micro-drama writing and directing skill: story engine, episodes, directing, handoff"
+ },
+ "skill-genres": {
+  "path": "library/skill/references/genre-engines.md",
+  "about": "Premises and season shape by genre"
+ },
+ "skill-hooks": {
+  "path": "library/skill/references/hooks-and-episode-chains.md",
+  "about": "Openings, escalation, reveals, cliffhangers"
+ },
+ "skill-dialogue": {
+  "path": "library/skill/references/dialogue-and-payoffs.md",
+  "about": "Voices, subtext, promises and payoffs"
+ },
+ "skill-shots": {
+  "path": "library/skill/references/shots-and-flow.md",
+  "about": "Performance, blocking, continuity, timing, Flow prompts"
+ },
+ "skill-sources": {
+  "path": "library/skill/references/source-lessons-and-review.md",
+  "about": "What the evidence supports, and how to review work"
+ },
+ "checklist": {
+  "path": "library/director-checklist.md",
+  "about": "Director's checklist: before an episode, choosing shots, every prompt, checking every image (written on LOCKED OUT, applies to every movie)",
+  "source": "/Volumes/MAC/NEW DRAM/production/DIRECTOR-CHECKLIST.md"
+ },
+ "skin": {
+  "path": "library/realistic-skin.md",
+  "about": "Prompt words that give real skin, and the words that give plastic faces",
+  "source": "/Volumes/MAC/NEW DRAM/production/PROMPT-RULES-REALISTIC-SKIN.md"
+ },
+ "flow-guide": {
+  "path": "tools/flow-runner/GUIDE.md",
+  "about": "Full guide to producing in Google Flow with the runner extension: set-up, a fresh movie, rejected prompts, the consistency checks (6c), another computer (10)"
+ },
+ "continuity-method": {
+  "path": "library/continuity-method.md",
+  "about": "The visual continuity method: masters, scene maps, prop custody"
+ },
+ "series-continuity": {
+  "path": "library/series-continuity.md",
+  "about": "Model for a series continuity file (cast locks, prop ledger, geography)"
+ },
+ "study": {
+  "path": "library/benchmark-study-untouchable-mechanic.md",
+  "about": "Benchmark study of The Untouchable Mechanic: what its episodes do"
+ },
+ "voices": {
+  "path": "library/flow-voices.md",
+  "about": "All 30 Google Flow voices with Flow's own description (gender, character, pitch), grouped by pitch, and which LOCKED OUT character has which"
+ }
 }

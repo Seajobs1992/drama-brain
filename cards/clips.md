@@ -9,7 +9,7 @@ Clips are made in Google Flow through the user's Flow runner extension. Guide: d
 
 **Set-up**
 - Omni 1.2 Flash, x1, download "1080p Upscaled", never the paid 4K.
-- The clip's cast is attached as Flow characters so the right Flow voice speaks. No ElevenLabs. Effects yes, music never.
+- The clip's cast is attached as Flow characters so the right Flow voice speaks (all 30 voices: doc `voices`). No ElevenLabs for voices. Effects yes, music never inside a clip.
 - Do not generate anything else in the Flow project while a run is going.
 
 **Prompts**
