@@ -569,7 +569,7 @@ def cmd_doctor(_):
         dirty = bool(g("status", "--porcelain"))
         ahead_behind = g("rev-list", "--left-right", "--count", "HEAD...@{u}").split()
         ahead, behind = (int(ahead_behind[0]), int(ahead_behind[1])) if len(ahead_behind) == 2 else (0, 0)
-        line(not dirty and not ahead and not behind, "online copy: %s" % (
+        ok &= line(not dirty and not ahead and not behind, "online copy: %s" % (
             "in step (as of the last check)" if not (dirty or ahead or behind) else
             "%s%s%s  -> run: sync" % ("changes here not saved; " if dirty else "", "%d to send; " % ahead if ahead else "",
                                       "%d to receive" % behind if behind else "")))
