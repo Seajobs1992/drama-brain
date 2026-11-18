@@ -59,6 +59,7 @@ The brain has a private online copy on GitHub, named `drama-brain`, under your a
   `python %USERPROFILE%\drama-brain\brain.py doctor`
 - Register the movie. For a new one: `python %USERPROFILE%\drama-brain\brain.py new-project "C:\path\to\Movie Folder" "Movie Name"`.
 - `selftest` runs the real gate against a throwaway folder and must show every line as `pass`. If a line fails, the gate is not protecting that computer yet.
+- **The Flow Chrome on Windows:** double-click `%USERPROFILE%\drama-brain\tools\flow-runner\open-flow-chrome.bat`. It opens Google Chrome with its own profile (`%USERPROFILE%\flow-chrome-profile`, apart from your everyday Chrome) and remote debugging on port 9333, like the Flow Chrome on the first Mac. The first time: sign in to Google Flow and Adobe Firefly in that window and load both extensions there (below). It remembers them after that. Always open it with this file, or the agent cannot reach it. For a desktop shortcut, right-click the file, choose Send to, then Desktop.
 - Both Chrome extensions work on Windows: Load unpacked `%USERPROFILE%\drama-brain\tools\flow-runner` and `%USERPROFILE%\drama-brain\tools\firefly-kling-runner`, then build each one's jobs with `python` instead of `python3`, for example `python %USERPROFILE%\drama-brain\tools\firefly-kling-runner\build_jobs.py "C:\path\to\Movie Folder"`.
 - `move_clips.sh` in both runners is for Mac. On Windows, move the downloaded clips from `Downloads\LOCKED-OUT\` into the movie folder by hand, or ask the agent to.
 
