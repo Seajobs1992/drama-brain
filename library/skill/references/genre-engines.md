@@ -12,6 +12,8 @@ Keep a clue chain: origin, access, possession, what it proves and who can challe
 
 Evidence: MG-004 times evidence for public reversal. Transfer the evidence timing, not the plot. Avoid convenient cameras, unexplained rescues and repeated accusations after decisive proof.
 
+Further evidence (2026-11-20 transcript pass): MG-004 lets the audience into the plan from minute three, so every polite "thank you" to the rival reads as a lie waiting to pay off. Its evidence (a memory card) is saved, delivered and held back for nine episodes, then played twice: once to clear her, once to expose the rival. Each insult chooses the arena where she wins: the cast-off dress becomes her handmade dress; the press ambush becomes her audience. Each win provokes a nastier attack.
+
 ## Comeback
 
 Engine: the lead is dismissed, humiliated or written off in public; the lead chooses a test where skill, not luck or a rescuer, can answer the doubt; the proof lands in front of the people who doubted. The audience must see the ability before the doubters do, used in an ordinary moment first.
@@ -22,6 +24,8 @@ Avoid: the hidden-billionaire shortcut where money ends the doubt instead of ski
 
 Evidence (Untouchable Mechanic study): Episode 1 establishes the lead's power before the disrespect, so the audience's knowledge turns humiliation into anticipation of recognition. Episodes 7 to 9 tie a concrete object (a pendant gift) to the dismissal and the public humiliation, which makes the harm legible. Episode 9 ends on a recognition claim and Episode 10 proves it: a claim alone does not earn belief. Do not generalise that every comeback lead needs a secret elite identity; skill, work or character can carry the comeback.
 
+Further evidence (2026-11-20 transcript pass): **MG-005:** power is shown in Episode 1. The family hunts the hidden hero while abusing him, and the payoff is held 18 episodes. A visible handicap (secret weights) makes his public failures feel unfair, not weak. Same-test-before-and-after makes reversals readable in seconds. **MG-007:** proof comes before the first insult (a cure in the first 17 s). Each rising authority who doubts her fails in public. **MG-010:** old humiliations are paid back exactly, with the same words and the same gesture.
+
 ## Hidden identity
 
 Engine: the audience knows who the lead really is; the people around them do not. Every scene plays on that gap. Give the concealment a real reason and a real cost: the lead loses something by staying hidden and risks something by being found out.
@@ -29,6 +33,8 @@ Engine: the audience knows who the lead really is; the people around them do not
 Keep a knowledge chart: who knows, who suspects, who misreads, and what evidence would prove it. Each disclosure must change a decision, not just add one more person who knows. Reveal in steps: a witness, a clue, a test, then the public reveal.
 
 Evidence: MG-007 uses a respectful witness before a wealth reveal. Transfer the step before the reveal, not the wealth. The Untouchable Mechanic study shows the same gap at work: the audience knows the lead's power from Episode 1, so every slight builds anticipation. It also warns against making every lead's secret an elite identity. Avoid reveals that solve every problem at once, and identities nobody could have hidden.
+
+Further evidence (2026-11-20 transcript pass): MG-008 makes recognition the danger, not the reward: being identified triggers a ruinous penalty, so every rescue leaves a trace that raises the stakes. Wins come as a prediction, then proof, inside one episode.
 
 ## Betrayal
 
@@ -38,6 +44,8 @@ Track who did what, when the lead could have known, and what the betrayer gains.
 
 Evidence: MG-013 shows how ordinary records and belongings can become evidence of what really happened. Avoid needing a new romantic rescuer to end the betrayal, and long speeches in place of an action.
 
+Further evidence (2026-11-20 transcript pass): MG-013 ties every injury to an instant reframing by the group ("jealous", "dramatic"), which gives the viewer's outrage a fresh target. The answer is not a counter-plot. It is leaving, and letting the group fail without her.
+
 ## Family drama
 
 Engine: family ties make walking away impossible, so every conflict has to be lived with. Inheritance, favouritism, a hidden past or a family business give the fight something concrete to be about.
@@ -45,6 +53,8 @@ Engine: family ties make walking away impossible, so every conflict has to be li
 Keep the clue chain for documents, wills and secrets: origin, access, what it proves. Close the promised estate, death or reputation thread even if romance also resolves. A reconciliation must be earned by a changed behaviour, not a single apology.
 
 Evidence: MG-003 changes the meaning of the past through documents and delayed explanations. Transfer the method, not the plot. Avoid a family where everyone is cruel without reasons.
+
+Further evidence (2026-11-20 transcript pass): MG-001 makes two families compete, and the better family is the reward. The villains are punished by their own side first. Comfort is built (a five-day montage), then broken by a death announcement.
 
 ## Romance
 
@@ -54,6 +64,8 @@ For a redemption romance, write the harmful pattern, a specific admission, a cos
 
 Evidence: MG-011 separates rescue from forgiveness. A reunion and an independent departure can both be valid endings.
 
+Further evidence (2026-11-20 transcript pass): MG-003 runs on a sentence the hero won't say. Proof works backward to reveal hidden virtue, through one drawer of documents. The rival suitor explains the hero rather than running him down, then leaves. The heroine wins by refusing. Weakness: the refusal to explain is repeated at least five times.
+
 ## Billionaire romance
 
 Engine: love across a gap in wealth and power. The drama is whether care can be real when one side can buy anything. Money can open doors; it cannot make the other person choose them.
@@ -61,6 +73,8 @@ Engine: love across a gap in wealth and power. The drama is whether care can be 
 Show care through choices that money does not make easy: time, attention, a risk, a respected refusal. Luxury gifts are not proof of love, and access without consent undermines them. Give the less powerful person their own goal, skill and decisions; they are not a prize.
 
 Evidence: MG-012's luxury gifts are undermined by unsafe access; its late respected refusal is the clearer change. Avoid control presented as romance, and wealth that solves the central conflict.
+
+Further evidence (2026-11-20 transcript pass): MG-007 makes the billionaire the one who is helpless (unconscious for ten files), while the heroine holds the agency. She refuses the prize three times before accepting. Warning: its "cure" scene ignores consent. Never copy it.
 
 ## Secret child
 
@@ -70,6 +84,8 @@ Keep a knowledge chart for parentage: who knows, who suspects, what proves it. E
 
 Evidence: MG-012's partial paternity reveals build suspense; MG-001 builds chosen family through practical care. Avoid paternity tests as the only drama, and children who exist only to be fought over.
 
+Further evidence (2026-11-20 transcript pass): MG-012 turns the secret into a number counted up (1, 3, 4, 6 children), so each child gets its own reveal. The heroine fights to keep the secret, and the love interest is the custody threat. The children act as lie detectors. Weakness: repeated denial loops, and the opening revenge plot is dropped.
+
 ## Emancipation
 
 Engine: unequal obligations become visible; the protagonist refuses; the refusal exposes dependence and creates a practical or social cost. Track who does the work, pays, bears risk and controls the explanation.
@@ -77,6 +93,8 @@ Engine: unequal obligations become visible; the protagonist refuses; the refusal
 Repurpose an established skill for self-protection. Make a boundary something the lead does, not only a speech. Test promises with the situation they claim to change. Grief can sit beside a decision that holds.
 
 Evidence: MG-013 turns record-keeping into a means of challenging identity misuse, belongings into evidence of unpaid work, and a shared photo archive into a new reading of the past. Its final driver's seat answers the opening exclusion. Avoid needing a new romantic rescuer, equating illness with dishonesty, or stretching one conclusion across repeated speeches.
+
+Further evidence (2026-11-20 transcript pass): MG-013 shows that the power is in leaving. Her old habit (keeping records) becomes her defence. The threat changes kind about every five episodes. Apologies are tested on screen, and the reflex returns within seconds.
 
 ## Workplace
 
@@ -86,6 +104,8 @@ Show an observable problem, the lead's relevant observation, a decision and a co
 
 Evidence: MG-008 turns a signature from danger into solidarity. These are dramatic patterns, not validated clinical or legal procedures. If the story depends on technical realism, check the specific claim against an authoritative source; otherwise keep invented mechanisms clearly fictional and consistent.
 
+Further evidence (2026-11-20 transcript pass): MG-008 runs on short checkable cycles: a claim, a deadline, a test. Documentation is the battlefield: signatures, logs, custody seals. Colleagues grow by signing for their own calls.
+
 ## Fantasy
 
 Engine: desire meets a rule-governed obstacle; growth changes what can be attempted; success creates a cost or a new problem. Track the current ability, limit, price, injury, resource and established counter. A hidden strength satisfies when earlier information makes its reveal make sense.
@@ -94,6 +114,8 @@ Use repeated tests to measure real change, not to repeat humiliation. Give allie
 
 Evidence: MG-005's prepared handicap removal differs from MG-009's household and artifact comedy; MG-010 makes an upgrade create danger and tests loyalty through a tempting illusion. Keep those differences. Avoid unprepared resurrection, arbitrary rank inflation, or a mentor test that endangers everyone without aftermath.
 
+Further evidence (2026-11-20 transcript pass): **MG-009:** disbelief, not injustice, is the engine. A public scale (a step counter from 500 to 950) gives one question per beat. Long-planted objects (a case visible from Episode 1, opened in Episode 61) hold the season together. **MG-010:** power is a relationship the lead feeds. Every upgrade becomes the next problem. Every win brings a new kind of exclusion.
+
 ## Magic and animals
 
 Engine: a private channel or gift reveals a need others misunderstand; useful care creates trust both ways. Give each animal or magical ally a distinct contribution and a reason to help. Show the useful ability before the climax needs it.
@@ -101,6 +123,8 @@ Engine: a private channel or gift reveals a need others misunderstand; useful ca
 Keep clear what the audience hears and what the human characters hear. The lead needs a believable public explanation when acting on private animal information. An animal voice must not reveal facts it could not know.
 
 Evidence: MG-006 uses private animal speech for comedy and practical solutions; MG-011 uses earlier care to prepare later rescue tasks. Avoid love that depends on healing powers, the same false accusation repeated, and villains reaching weapons through unexplained security failures.
+
+Further evidence (2026-11-20 transcript pass): **MG-006:** the gift is perceptual, so secret knowledge must become visible proof (signs, then a test, then the object). The animal plays many roles: witness, comic voice, matchmaker. **MG-011:** every apparent predator turns out to be a carer (attack at the end of one episode, tenderness at the start of the next). The child is loved before she is useful. Mercy is kept separate from forgiveness.
 
 ## Thriller
 
@@ -111,6 +135,8 @@ Track the threat (who, what they can actually do, what limits them), the clock, 
 Avoid characters ignoring an obvious way out, threats that grow without a reason, and twists that only work because someone was stupid.
 
 No benchmark evidence yet.
+
+Further evidence (2026-11-20 transcript pass): MG-002 (prison) gives the viewer the villain's identity about 20 episodes before the lead, and uses the tormentor's inner voice to contradict his acts. One small object (a cufflink) changes meaning four times. Warning: it presents abuse as romance. Never copy that.
 
 ## Survival
 

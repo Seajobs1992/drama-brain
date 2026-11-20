@@ -67,3 +67,64 @@ Brief: a 60-second medical mystery episode, no violence. A junior nurse is blame
 - Next opening: Stay with her arrival at the patient's bedside. Show a specific condition and a response. Do not jump to unrelated backstory or claim the alarm was meaningless.
 
 These timings are an illustrative editorial budget, not supported generation durations or a clinical treatment guide. The mystery concerns concealment and accountability. Any detailed medical procedure needs appropriate research.
+
+## Measured patterns from 14 films
+
+Source: every episode of The Untouchable Mechanic and the 13 Multi-Genre Study films (about 630 episodes), read on 2026-11-20 (`research/CROSS-FILM-PLAYBOOK.md`). These are tendencies with ranges, not formulas. They show how the stories are built, not why they were watched.
+
+### Handoffs and timing
+- **The next episode picks up the cliffhanger within about 4 s in 59% of handoffs**, ranging from 33% to 72% by film. Fight and danger endings are answered at once. Delays are deliberate: at arc boundaries, on romance threads, and after "plan" episodes. Replaying the last line before answering is rare (0 to 6 times per film).
+- **The key turn lands just past the middle of an episode,** at a median of about 53% (45% to 61% by film), leaving room to build the ending.
+- **Typical episodes run about 70 s.** Opening episodes run much longer (often 120 to 180 s) before lengths settle.
+- **The weakest openings are ordinary:** scenery, an errand, polite excuses. The strongest open in danger, in dramatic irony, or on the answer to the last cliffhanger.
+
+### Cliffhanger mix
+Across about 580 endings:
+
+| Type | Share |
+|---|---|
+| Danger | 24% |
+| Reveal pending | 21% |
+| Decision | 17% |
+| Arrival | 10% |
+| Closure | 9% |
+| Humiliation pending | 7% |
+| Identity claim | 4% |
+| Romance withheld | 4% |
+| False resolution | 3% |
+
+No film relies on one type, and the mix follows the phase of the story:
+- **Early:** humiliation and arrival.
+- **Middle and climax:** danger.
+- **After big wins:** decision and closure.
+- **Before a twist:** a false resolution.
+
+Action and fantasy lean on danger. Romance and family lean on decisions and withheld reveals.
+
+### Mechanisms most hits share
+1. **The viewer knows first** (13 of the 14 films). The pleasure is watching characters stay wrong. When the narrator learns things with the viewer, the title or premise has to supply the certainty instead ("it was always me").
+2. **Proof before the insult.** Show the lead's worth before anyone looks down on them, so mistreatment reads as anticipation.
+3. **One object carries the mystery and changes meaning** at least twice (a pendant, a cufflink, a memory card, a toy recording).
+4. **Pressure climbs by changing kind, not volume:** higher authorities, a new exclusion after each win, a different kind of threat every few episodes.
+5. **Payback is public and exact:** witnesses who change sides, and the same words or gesture returned.
+6. **Each insult chooses the arena where the lead later wins.**
+7. **A visible scale or count:** a step counter, children counted one by one, a countdown.
+8. **Care before reward;** love proven by a cost.
+9. **A child or an animal says what the adults cannot.**
+10. **Comfort is built, then broken,** so the next threat has something to take.
+11. **Apologies are tested on screen;** saving someone stays separate from forgiving them.
+12. **Absence proves worth:** when the lead leaves, the others fail at what she did.
+
+### Narration and inner voice
+- **A narrated line in the first seconds can state the wound or the impossible choice** before any scene plays (the push off the cliff; "my father could only take one of us").
+- **Inner thoughts that contradict actions keep the viewer ahead** (a tormentor who privately cares; a villain thinking his plan).
+- **A film narrated throughout loses dramatic irony.** Never use narration to report big events that should be seen.
+
+### What the films get wrong
+Avoid these:
+- the same beat for 3 to 6 episodes without a new cost
+- stakes and weapons dropped
+- proofs and powers that were never set up
+- big turns told, not shown
+- names, ranks and clocks that drift
+- coercion presented as romance
