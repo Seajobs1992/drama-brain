@@ -31,3 +31,4 @@ Order of work: references first, inspected, then anything that depends on them.
 
 ## Learned the hard way
 - 2026-11-20: Description writers that state race or ethnicity (the original Storyboard Studio told its character writer to 'Include race/ethnicity') take the casting choice away: every face option came out the same person (The Cleaner, Ruth, 2026-11-20). Rule: character descriptions give age, build, hair and clothes but never race, ethnicity or skin colour; the creator picks those from face options.
+- 2026-11-20: Storyboard tool location sheets drawn as four views in one image invent each quarter: the reverse repeated the wide, panel 3 was another room, panel 4 added a keyboard (The Cleaner office, 2026-11-20). Rule: make the wide master alone first; make every other angle from it as reference, with a written wall-by-wall room layout and the screen sides worked out per camera; no objects the script does not name.
