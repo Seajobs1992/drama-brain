@@ -28,3 +28,6 @@ Order of work: references first, inspected, then anything that depends on them.
 - No text, numbers, logos or plates in images.
 - Log the real task ID only after the tool returns it. Never write a log row in the same batch as the generate call.
 - Record every selection in doc `locks`. Your selection is not approval: show the board.
+
+## Learned the hard way
+- 2026-11-20: Description writers that state race or ethnicity (the original Storyboard Studio told its character writer to 'Include race/ethnicity') take the casting choice away: every face option came out the same person (The Cleaner, Ruth, 2026-11-20). Rule: character descriptions give age, build, hair and clothes but never race, ethnicity or skin colour; the creator picks those from face options.
