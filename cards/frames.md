@@ -32,3 +32,4 @@ with: project
 
 ## Learned the hard way
 - 2026-11-20: Storyboard tools link only the speaking character, so over-the-shoulder frames lose the foreground person (the creator found it in Google's Storyboard Studio, 2026-11-20). Rule: any character with any visible part (shoulder, back of head, hand, legs at the edge) is linked with their reference and named in the frame prompt as the soft foreground, at a stated screen side, staying silent.
+- 2026-11-20: An insert in Google's Storyboard Studio had no location reference (only Ruth, Dean, the sheet), so the desk drifted: two lamps, extra pen pot and folders, a different floor (The Cleaner, Shot 3, 2026-11-20). Rule: every frame, including inserts and close-ups of a surface, carries the scene's location reference; close views add no objects that are not in the location reference.
