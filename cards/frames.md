@@ -29,3 +29,6 @@ with: project
 
 **After**
 - Contact board in shot order, corrected frames marked. Update doc `locks`. Full list: `brain.py section checklist "Checking every image"`.
+
+## Learned the hard way
+- 2026-11-20: Storyboard tools link only the speaking character, so over-the-shoulder frames lose the foreground person (the creator found it in Google's Storyboard Studio, 2026-11-20). Rule: any character with any visible part (shoulder, back of head, hand, legs at the edge) is linked with their reference and named in the frame prompt as the soft foreground, at a stated screen side, staying silent.
