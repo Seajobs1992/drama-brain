@@ -14,3 +14,6 @@ keywords: credit, generate, generation, regenerate, remake, redo, retake, spend,
 - Flow refusals are free. Flow image jobs are 0 credits. Never use the paid 4K upscale.
 - Pollo is for images only, never audio.
 - Report credits honestly, including what your own mistakes wasted.
+
+## Learned the hard way
+- 2026-11-21: Submitted 24 Pollo face options (6 characters x 4) right after 'start with character' without first showing the count, the exact credit cost and the balance; the creator felt credits were wasted. Rule: before any paid batch, state how many items, the exact cost and the balance, and wait for a go, even when the step was already named.
