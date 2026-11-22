@@ -656,9 +656,38 @@ def has_remote():
         return False
 
 
+def refresh_skill():
+    """On a computer that is not the skill's master, copy any changed skill file from library/skill into the installed
+    skill (~/.agents/skills and Claude's copy when it is not a link), so a fetched update reaches Claude."""
+    home = os.path.expanduser("~")
+    src = os.path.join(HERE, "library", "skill")
+    shared = os.path.join(home, ".agents", "skills", "ai-microdrama-director")
+    link = os.path.join(home, ".claude", "skills", "ai-microdrama-director")
+    if not os.path.isdir(src) or any(os.path.realpath(m.get("from", "")) == os.path.realpath(shared)
+                                     for m in load_json(os.path.join(HERE, "mirrors.json"), [])):
+        return
+    targets = [t for t in (shared, link) if os.path.isdir(t) and not os.path.islink(t)]
+    for root, _, files in os.walk(src):
+        for f in files:
+            s = os.path.join(root, f)
+            rel = os.path.relpath(s, src)
+            for t in targets:
+                d = os.path.join(t, rel)
+                try:
+                    if not (os.path.exists(d) and open(s, "rb").read() == open(d, "rb").read()):
+                        os.makedirs(os.path.dirname(d), exist_ok=True)
+                        shutil.copy2(s, d)
+                except OSError:
+                    pass
+
+
 def quiet_pull():
     """At most every six hours, fetch the other computer's changes in the background. Fast-forward only, so it can
     never leave the folder half merged; if both computers changed things, `sync` sorts it out."""
+    try:
+        refresh_skill()                                          # applies whatever the last fetch brought
+    except Exception:
+        pass
     stamp = os.path.join(LOCAL, "last-pull")
     if not has_remote() or (os.path.exists(stamp) and time.time() - os.path.getmtime(stamp) < 6 * 3600):
         return
