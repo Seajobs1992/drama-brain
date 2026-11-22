@@ -17,3 +17,6 @@ Use the skill `ai-microdrama-director` (doc `skill`). Read its SKILL.md, then on
 - Evidence: the benchmark study (doc `study`) supports story and sampled visual observations. It does not prove why a film got views. Use mechanisms, never copy plots.
 - No em dashes anywhere. Plain, playable prose.
 - New cast, places or props you invent go to the user as options before anything is generated.
+
+## Learned the hard way
+- 2026-11-22: Handed the creator a staging detail a director should settle (how the key sinks in a coupe tower instead of a basin) as 'your call'; the creator expects the director to decide. Rule: decide staging and props that serve the script yourself, record the decision, and only bring the creator choices that change the story, the casting or the budget.
