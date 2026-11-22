@@ -52,5 +52,13 @@
  "voices": {
   "path": "library/flow-voices.md",
   "about": "All 30 Google Flow voices with Flow's own description (gender, character, pitch), grouped by pitch, and which LOCKED OUT character has which"
+ },
+ "skill-production": {
+  "path": "library/skill/references/production-and-quality.md",
+  "about": "Production discipline: prop state, blocking, gaze, people per shot, sound, checking footage, repair cap"
+ },
+ "skill-refvideo": {
+  "path": "library/skill/references/reference-video-production.md",
+  "about": "Reference-to-video clips (Pollo, Wan, Seedance): keyframes, prompt shape, Wan 3.0 modes, end frames, small props"
  }
 }

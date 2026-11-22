@@ -39,7 +39,7 @@ Run them as `python3 ~/drama-brain/brain.py <command>`.
 
 ## Another computer
 
-The brain has a private online copy on GitHub, named `drama-brain`, under your account.
+The brain has an online copy on GitHub, named `drama-brain`, under your account. It is PUBLIC (your choice, 2026-11-22): anyone can read it, so never put names, emails or account details in it.
 
 1. On the other computer, sign in to GitHub in a terminal (`gh auth login`), then fetch the brain into the home folder:
    `gh repo clone drama-brain ~/drama-brain`

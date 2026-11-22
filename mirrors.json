@@ -15,5 +15,23 @@
   "exclude": [
    "jobs"
   ]
+ },
+ {
+  "_about": "The micro drama skill (ai-microdrama-director). Its working copy is the live skill on the first Mac; `sync` copies it into library/skill so another computer installs the current version. Three entries because sync copies top-level files only.",
+  "from": "/Users/iam/.agents/skills/ai-microdrama-director",
+  "to": "library/skill",
+  "exclude": []
+ },
+ {
+  "_about": "The skill's references (see above).",
+  "from": "/Users/iam/.agents/skills/ai-microdrama-director/references",
+  "to": "library/skill/references",
+  "exclude": []
+ },
+ {
+  "_about": "The skill's agent settings (see above).",
+  "from": "/Users/iam/.agents/skills/ai-microdrama-director/agents",
+  "to": "library/skill/agents",
+  "exclude": []
  }
 ]

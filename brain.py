@@ -478,9 +478,14 @@ def cmd_install(_):
         print("codex: no ~/.codex folder on this computer, skipped.")
     skill_src = os.path.join(HERE, "library", "skill")
     shared = os.path.join(home, ".agents", "skills", "ai-microdrama-director")
+    is_master = any(os.path.realpath(m.get("from", "")) == os.path.realpath(shared)
+                    for m in load_json(os.path.join(HERE, "mirrors.json"), []))
     if os.path.isdir(skill_src) and not os.path.exists(shared):
         shutil.copytree(skill_src, shared)
         print("skill: copied ai-microdrama-director to %s" % shared)
+    elif os.path.isdir(skill_src) and not is_master:             # another computer: bring its copy up to date
+        shutil.copytree(skill_src, shared, dirs_exist_ok=True)
+        print("skill: updated ai-microdrama-director at %s" % shared)
     link = os.path.join(home, ".claude", "skills", "ai-microdrama-director")
     if os.path.exists(shared) and not os.path.lexists(link):
         os.makedirs(os.path.dirname(link), exist_ok=True)
@@ -490,6 +495,9 @@ def cmd_install(_):
         except OSError:                                          # Windows without the right to make links
             shutil.copytree(shared, link)
             print("skill: copied for Claude to %s" % link)
+    elif os.path.isdir(link) and not os.path.islink(link) and not is_master:   # a copy, not a link: refresh it too
+        shutil.copytree(shared, link, dirs_exist_ok=True)
+        print("skill: updated Claude's copy at %s" % link)
     for r in roots():
         if os.path.isdir(r):
             d = set_pointer(r)

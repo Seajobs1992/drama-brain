@@ -1,6 +1,6 @@
 ---
 name: ai-microdrama-director
-description: Develop and direct original AI microdramas across romance, revenge, family, professional, fantasy and emancipation stories. Use for story engines, episode scripts, hooks, cliffhangers, performance, shot plans, Flow prompt preparation and specific directing repairs. Preserve existing approved project material.
+description: Develop and direct original AI microdramas across romance, revenge, family, professional, fantasy and emancipation stories. Use for story engines, episode scripts, hooks, cliffhangers, performance, shot plans, Flow prompt preparation, reference-to-video clip prompts (Pollo, Wan, Seedance) and specific directing repairs. Preserve existing approved project material.
 ---
 
 # AI Microdrama Director
@@ -18,7 +18,9 @@ Choose the relevant references rather than reading every file for every request:
 - [Genre engines](references/genre-engines.md): new premises, season architecture and genre-specific decisions.
 - [Hooks and episode chains](references/hooks-and-episode-chains.md): opening questions, causal escalation, reveals and next-episode obligations.
 - [Dialogue and payoffs](references/dialogue-and-payoffs.md): episode writing, distinct voices, subtext, promises and emotional change.
-- [Shots and Flow handoff](references/shots-and-flow.md): performance, blocking, continuity, timing and copyable prompts.
+- [Shots and Flow handoff](references/shots-and-flow.md): performance, blocking, continuity, background coverage, set dressing, beat budget, timing and copyable prompts.
+- [Reference-to-video production](references/reference-video-production.md): locked keyframe per clip, several shots in one generation, reference order and the prompt format for Pollo, Wan, Seedance and similar.
+- [Production and quality](references/production-and-quality.md): beats versus jobs, timing feasibility, continuity bible, prop state record, blocking map, gaze, people per shot, sound records, checking footage and the repair cap. Merged from Pollo's `/short-drama-creator` with this skill's lessons; read it before any paid generation and before judging any output.
 - [Source lessons and review](references/source-lessons-and-review.md): evidence boundaries, film examples and diagnosis of supplied work.
 
 ## Find the story engine
@@ -57,6 +59,10 @@ Specify what an actor does to achieve an objective, not just an emotion. Let phy
 
 Distinguish the finished episode, editorial shot and generated clip. Split difficult actions into readable preparation, contact and consequence. Carry positions, eyelines, hands, props, injuries, lighting and costume across cuts. Preserve approved dialogue exactly. Allow speech, pauses, action and reaction enough time; resolve overload by splitting coverage or proposing an authorized edit.
 
+Budget the beats before any prompt: every humiliation, reveal, rescue and cliffhanger gets a witness reaction, a held beat of silence or stillness after the decisive line, and a sound cue that changes the room. Count those seconds in the clip length.
+
+Decide staging, blocking, props and set dressing yourself as the director and record the decision. Bring the creator only choices that change the story, the casting or the budget.
+
 ## Deliver the requested artifact
 
 Use the project’s format. In its absence:
@@ -65,6 +71,7 @@ Use the project’s format. In its absence:
 - **Episode script:** scene headings, filmable action, speaker-labeled dialogue, essential sound, ending and next opening. Separate narration, inner thought and audible speech.
 - **Director’s packet:** intention, timed beats, shot IDs, staging, exact dialogue, performance, start/end states and edit purpose.
 - **Flow prompts:** one clean executable prompt per shot plus references, continuity locks and unresolved production constraints outside the prompt. Follow the Flow handoff reference.
+- **Reference-to-video clips:** one locked keyframe per clip, named references in a fixed order, timed shots and an end state. Follow the reference-to-video reference.
 - **Review or repair:** location, evidence, dramatic or production consequence, specific repair and how to verify it. Fix within the requested scope rather than merely scoring the work.
 
 Do not submit generation, spend credits or publish merely because prompts were requested. Use existing authorization where present. Verify live tool capabilities before submission; do not invent model limits, supported references, audio fidelity or costs.
@@ -81,6 +88,19 @@ Before handoff, resolve material contradictions within the authorized scope:
 6. Dialogue has distinct intention, fits its time and preserves approved wording.
 7. Shots physically connect and a generator can attempt their individual actions.
 8. The finale addresses the story’s major promises, including those outside romance.
+
+Before spending credits on pictures or clips, show the creator this checklist against the actual plan, item by item, with where each is covered:
+
+1. Every shot's background is supplied by a location picture at the right distance (the background table).
+2. Set dressing has one design per object across every picture that shows it.
+3. Story props have a reference picture and a stated state in every shot (worn, held, gone).
+4. Every humiliation, reveal, rescue and cliffhanger has its reaction, held beat and sound cue, with seconds counted.
+5. Each clip has an approved keyframe, and its references and timed shots follow the reference-to-video format.
+6. Each shot has at most two actively interacting people, a gaze target for every face, and a prop state that follows from the shot before (holder, hand, full or empty).
+7. The timed plan passes the timing check: every line at natural pace, plus reactions and held beats.
+8. The count, the exact cost and the current balance are stated, and the creator has said go.
+
+After generation, judge the footage with the checks in the production and quality reference, report what was and was not checked, and repair within its cap.
 
 Care, rescue, forgiveness and reconciliation are different outcomes. An apology is a claim to test through behavior. Helping someone does not entitle them to affection, and a protagonist may refuse reunion. Preserve the chosen genre’s moral complexity without mislabeling coercion as consent.
 

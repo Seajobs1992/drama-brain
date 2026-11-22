@@ -8,6 +8,14 @@ Blocking can express status: who occupies the doorway, who must cross the room, 
 
 For a prop exchange, record its holder, hand, orientation, movement, contact and final location. For a wound, track side, costume damage, blood and physical limitation. A new close-up must inherit the previous state.
 
+## Background coverage before making locations
+
+Before any location picture is made, go shot by shot and write which way the camera faces and what fills the frame behind the subject at that shot size (a close-up on a stage needs the backdrop; a medium in a doorway needs the doors and what lies beyond). Map each shot to the location picture that supplies that background. Wherever the master shows that area small or not at all, plan a closer view of it, made from the master so it matches. Show this table with the cost of the location pictures.
+
+## Set dressing stays identical
+
+Track set dressing, not only story props: microphones, fountains, lamps, cars, flowers, glassware, curtains. Choose one design for each and give it to every picture that shows it. When a new picture introduces a different design of the same object, correct the odd one out with a targeted edit from the chosen design. Compare these objects across all pictures of the scene, not only against each picture's own prompt.
+
 ## Coverage with a purpose
 
 An establishing view can make a later close-up intelligible. An insert should expose a relevant detail. A reaction should show a changed interpretation. A two-shot can preserve a relationship or power imbalance better than alternating isolated faces.
@@ -21,6 +29,8 @@ For physical action, show enough preparation, direction, contact and consequence
 Keep each spoken line assigned to its actual speaker, with exact wording and spoken language. Distinguish audible dialogue, voiceover, inner thought and nonverbal sound. Describe intention through playable delivery: “tries to sound casual; hesitates before the name”, not “very dramatic”.
 
 Estimate speaking time, then add pauses, action and reaction. A rough planning range of 120–170 words per minute can expose an overloaded English line, but it is not a model limit or a substitute for a read-through. Language, emotion and interruptions change duration. If it does not fit, flag the conflict and propose splitting the shot or an authorised script edit. Never silently paraphrase approved dialogue.
+
+**Beat budget.** In every humiliation, reveal, rescue and cliffhanger, reserve seconds before writing any prompt for: a reaction from the witnesses (laughing behind hands, turning, freezing), a held beat of 2 to 3 seconds of silence or stillness after the decisive line, and a sound cue that changes the room (a microphone squeal, music cutting dead, a glass chime, applause swelling for the wrong person). Add these seconds to the clip length; never squeeze them out to save time.
 
 Specify motivated ambience, effects and score intention separately. Silence or a held reaction can carry a reveal. Avoid constant impact sounds under every sentence. Do not promise that a generator will produce exact dialogue, lip sync or sound mixing. Verify the output afterward when audio access is available.
 
