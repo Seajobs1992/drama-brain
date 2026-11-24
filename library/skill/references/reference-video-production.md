@@ -147,6 +147,12 @@ Two speakers in one shot (the multi-speaker form):
 - No clip over 7 seconds. Give every second a job. Budget about 3 words a second, plus half-second silent beats for the camera. If the plan says 10 s, aim for 6.
 - Merge consecutive silent beats on one set into one shot (first frame, end frame, middle in words). Put two short lines in one multi-speaker shot rather than two clips.
 
+**Pace** (The Valet, 22 Nov 2026: "the pace is too slow")
+- Wan talks at normal speed but fills spare seconds with dead air: up to 4 s before a line and 1 to 1.3 s between sentences.
+- Budget each shot at words/3 + 0.5 s. Silent actions 2 s at most. End the clip on the last word.
+- For fast exchanges write "says at once, fast and clipped, no pause between sentences". Never write "slow".
+- In the edit, trim to 0.2 s before and 0.3 s after each line; dialogue may be sped 1.1x with pitch kept (disclose it).
+
 **Known drifts to check for**
 - When the camera pushes in from a wide keyframe in reference mode, Wan may rebuild the background behind the faces. Naming two set items from the frame helps.
 - A writing hand adds an extra mark even when forbidden. Plan a trim or a hold on the still.
