@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "Pollo Runner",
+  "version": "1.5.0",
+  "description": "Fills Pollo.ai with each job (pictures, prompt, free Unlimited settings), sends it, waits, and saves the result named by job ID. Never sends a job unless Pollo shows Unlimited.",
+  "permissions": ["downloads", "storage"],
+  "host_permissions": ["https://pollo.ai/*", "https://videocdn.pollo.ai/*"],
+  "background": { "service_worker": "background.js" },
+  "action": { "default_popup": "popup.html", "default_title": "Pollo runner" },
+  "content_scripts": [
+    {
+      "matches": ["https://pollo.ai/*"],
+      "js": ["hook.js"],
+      "world": "MAIN",
+      "run_at": "document_start"
+    },
+    {
+      "matches": ["https://pollo.ai/*"],
+      "js": ["page.js", "runner.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}

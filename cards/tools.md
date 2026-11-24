@@ -5,6 +5,7 @@ order: 80
 keywords: extension, popup, runner code, build_jobs, script bug, chrome, browser storage, disk space, brain, hook, mcp, install
 ---
 - Flow runner extension: its code travels in the brain at `tools/flow-runner`, guide in doc `flow-guide`. The working copy loaded in Chrome is named in `mirrors.json`: change that one, and `sync` copies it into the brain. The `jobs` folder (the movie's frames and prompts) is built per computer and never synced.
+- Pollo runner extension (`tools/pollo-runner`, guide doc `pollo-guide`): GPT Image 2 and MiniMax H3 on the website's free Unlimited settings, an extra free path that does not replace Wan 3.0 on the MCP. It presses Generate only when Pollo's price reads Unlimited and stops if a task records any credit. Pollo's terms forbid bots: keep it paced (1 at once, a pause between jobs).
 - After a script or frame change, rebuild the job list (`build_jobs.py "<movie folder>"`), reload the extension, and confirm the page's version stamp before any paid run.
 - Per-clip corrections live in the episode's `flow-fixes.json`: `prompt`, `alt`, `seconds`, `cast`, `frame`, `mode` ("frames"), `extra` (prop pictures), and `frame <id>` entries for image jobs. Every entry carries a `why`.
 - New site to automate: map its controls read-only first, test "fill" without generating, leave the Generate click to the user.

@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Pollo runner - Saver</title>
+<style>
+  :root { --bg:#1b1b1d; --panel:#26262a; --line:#3a3a40; --text:#e9e9ec; --dim:#9a9aa3; --accent:#ff6a2b; --ok:#3fb27f; --bad:#e0605a; --warn:#d9a441; }
+  body { margin:0; background:var(--bg); color:var(--text); font:15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+  main { max-width:720px; margin:40px auto; padding:0 20px; }
+  h1 { font-size:20px; margin:0 0 4px; }
+  .sub { color:var(--dim); }
+  .card { border:1px solid var(--line); border-radius:10px; padding:16px; margin:18px 0; background:var(--panel); }
+  .row { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+  .big { font-size:17px; font-weight:600; }
+  button { font:inherit; color:#fff; background:var(--accent); border:0; border-radius:8px; padding:8px 14px; cursor:pointer; }
+  button.plain { background:transparent; border:1px solid var(--line); color:var(--text); }
+  .ok { color:var(--ok); } .bad { color:var(--bad); } .warn { color:var(--warn); }
+  #log { font:12px/1.5 ui-monospace, Menlo, monospace; color:#c9c9cf; white-space:pre-wrap; max-height:300px; overflow:auto; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Pollo runner: where results are saved</h1>
+  <div class="sub">Keep this tab open (it is pinned) while a run is going. It writes every picture and clip straight into the folder you choose for the movie.</div>
+
+  <div class="card">
+    <div class="sub">Movie in the job list</div>
+    <div class="big" id="movie">…</div>
+    <div class="sub" id="built"></div>
+  </div>
+
+  <div class="card">
+    <div class="sub">Output folder for this movie</div>
+    <div class="big" id="folder">Not chosen yet</div>
+    <div id="perm" class="sub"></div>
+    <div class="row" style="margin-top:10px">
+      <button id="choose">Choose folder…</button>
+      <button id="allow" class="plain">Allow access</button>
+    </div>
+    <div class="sub" style="margin-top:10px">Files go into <b id="layout">&lt;folder&gt;/&lt;episode&gt;/&lt;job id&gt;.png or .mp4</b>, each with a .json holding Pollo's task id. An existing file is never overwritten: a new take is saved as "1-04 (1).mp4".</div>
+  </div>
+
+  <div class="card">
+    <div class="sub">Saved in this tab</div>
+    <div id="log"></div>
+  </div>
+</main>
+<script src="saver.js"></script>
+</body>
+</html>

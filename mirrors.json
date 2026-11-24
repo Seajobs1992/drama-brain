@@ -17,6 +17,14 @@
   ]
  },
  {
+  "_about": "The Pollo runner Chrome extension (24 Nov 2026): GPT Image 2 pictures and MiniMax H3 clips on Pollo's free Unlimited settings through the website. Working copy next to the other runners; the jobs folder is built per computer from the movie folder.",
+  "from": "/Volumes/MAC/NEW DRAM/tools/pollo-runner",
+  "to": "tools/pollo-runner",
+  "exclude": [
+   "jobs"
+  ]
+ },
+ {
   "_about": "The micro drama skill (ai-microdrama-director). Its working copy is the live skill on the first Mac; `sync` copies it into library/skill so another computer installs the current version. Three entries because sync copies top-level files only.",
   "from": "/Users/iam/.agents/skills/ai-microdrama-director",
   "to": "library/skill",

@@ -68,5 +68,9 @@
   "skill-camera": {
     "path": "library/skill/references/cinematography.md",
     "about": "AI cinematography: 18 camera movements, 20 angles and shots, 18 more shots, micro-drama combinations and the master camera prompt structure. Compulsory for every shot plan, frame and clip (user, 24 Nov 2026)."
+  },
+  "pollo-guide": {
+    "path": "tools/pollo-runner/README.md",
+    "about": "Pollo runner extension: what is free on Unlimited, job list format, install, run, the free-only guard, the terms risk"
   }
 }
