@@ -7,15 +7,47 @@
   "spend": [
     {
       "tool": "^mcp__.+__(generate_(image|video|audio|music|speech|3d|gaussian_world)(_batch)?|edit_video|extend_video|upscale_(image|video)|swap_face|motion_control|clone_voice|reframe_video|translate_video|creative_(generate_.+|edit_image|design_voice|run_flow_nodes)|vidiq_(generate_.+|voiceover_generate|edit_media|motion_graphics))$",
-      "cards": ["credits"]
+      "cards": [
+        "credits"
+      ]
     },
     {
       "tool": "^mcp__flow__.*(generate|animate|create|run|submit).*",
-      "cards": ["credits", "clips"]
+      "cards": [
+        "credits",
+        "clips"
+      ]
     },
     {
       "bash": "(runfix|runclips)\\.mjs",
-      "cards": ["credits", "clips"]
+      "cards": [
+        "credits",
+        "clips"
+      ]
     }
-  ]
+  ],
+  "precheck_skill": [
+    "skill",
+    "skill-refvideo",
+    "skill-shots"
+  ],
+  "precheck_ticks": [
+    "keyframe",
+    "faces",
+    "costumes",
+    "hats",
+    "hands",
+    "props",
+    "eyelines",
+    "lens",
+    "camera",
+    "words",
+    "duplicates",
+    "edit-first"
+  ],
+  "script_docs": [
+    "wan-script",
+    "screenplay"
+  ],
+  "_about_precheck": "Paid tools also need: the skill files in precheck_skill read in full this session, a sheet that passes `brain.py precheck` (every tick in precheck_ticks on every job, script words exact, no duplicate first frames), the user's own yes typed after it, and no more calls or seconds than the sheet. edit-first = a fault that the edit can cover is never a retake."
 }

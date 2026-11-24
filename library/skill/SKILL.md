@@ -19,8 +19,9 @@ Choose the relevant references rather than reading every file for every request:
 - [Hooks and episode chains](references/hooks-and-episode-chains.md): opening questions, causal escalation, reveals and next-episode obligations.
 - [Dialogue and payoffs](references/dialogue-and-payoffs.md): episode writing, distinct voices, subtext, promises and emotional change.
 - [Shots and Flow handoff](references/shots-and-flow.md): performance, blocking, continuity, background coverage, set dressing, beat budget, timing and copyable prompts.
-- [Reference-to-video production](references/reference-video-production.md): locked keyframe per clip, several shots in one generation, reference order and the prompt format for Pollo, Wan, Seedance and similar.
+- [Reference-to-video production](references/reference-video-production.md): locked keyframe per clip, several shots in one generation, reference order and the prompt format for Pollo, Wan, Seedance and similar. For Wan 3.0, start at its "Wan 3.0 working recipe" section: the user-approved prompt form, keyframe as the only reference, 7 second cap.
 - [Production and quality](references/production-and-quality.md): beats versus jobs, timing feasibility, continuity bible, prop state record, blocking map, gaze, people per shot, sound records, checking footage and the repair cap. Merged from Pollo's `/short-drama-creator` with this skill's lessons; read it before any paid generation and before judging any output.
+- [Cinematography](references/cinematography.md): camera movements, angles, shot sizes, micro-drama combinations and the master camera prompt structure. Compulsory for every shot plan, keyframe and clip prompt.
 - [Source lessons and review](references/source-lessons-and-review.md): evidence boundaries, film examples and diagnosis of supplied work.
 
 ## Find the story engine
