@@ -85,7 +85,7 @@ Chrome extensions can only save inside Chrome's own download folder, so the runn
 1. Open `https://pollo.ai/image` (signed in) and keep that tab open. It can be in the background, but keep the Chrome window visible (a covered window can stall timers, as with Firefly).
 2. Click the extension icon. Tick jobs (**Not saved**, **Images**, **Videos** or one by one).
 3. First time on a new movie: **Fill next only**. It fills the first ticked job and stops before Generate. Look at the bar in Pollo.
-4. **Run ticked**: sends the ticked jobs one after another and saves each result. Settings: **At once** (default 1), **Pause between jobs** (default 30 s), **Give up after** (default 40 min).
+4. **Run ticked**: sends the ticked jobs one after another and saves each result. Settings: **At once** 1 to 6 (default 1; Pollo's Ultra limit is 6 tasks at once), **Pause between jobs** 0 to 120 s (default 30 s), **Give up after** 10 to 120 min (default 40 min). They can be changed during a run and apply within a few seconds. The pause and a low At once are only caution about Pollo's ban on bots; Pollo itself does not need them (the runner always waits for Pollo to confirm each send).
 5. **Stop** stops after the current step. Jobs already sent keep generating; press **Run ticked** again to collect them (they are never sent twice).
 6. **Redo ticked** clears the status of ticked jobs so Run sends them again (a new take saves as `<id> (1).png`; nothing is overwritten). Only for a fault the edit cannot hide.
 
