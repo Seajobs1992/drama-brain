@@ -16,6 +16,7 @@ folder can be copied to another computer and set up with:  python3 brain.py inst
   precheck <sheet.md>         the pre-spend check; paid tools stay locked until it passes and the user says yes
   install | doctor | selftest | budget | sync
   hook                        the gate, called by Claude Code and Codex hooks (JSON on stdin)
+Claude Code gets the gate, the skill and slash commands from the plugin in plugin/ (set up by install).
 """
 import sys, os, json, re, time, shlex, shutil, subprocess
 
@@ -168,15 +169,34 @@ def load_project(root):
     return {"root": root, "name": name, "docs": docs, "body": body.strip(), "file": p}
 
 
+def marked_root(path):
+    """The nearest folder at or above `path` that holds a BRAIN-PROJECT.md, so a movie folder is gated even before it
+    is registered on this computer."""
+    try:
+        d = os.path.realpath(path)
+        while True:
+            if os.path.isfile(os.path.join(d, PROJECT_FILE_NAME)):
+                return d
+            up = os.path.dirname(d)
+            if up == d:
+                return None
+            d = up
+    except Exception:
+        return None
+
+
 def project_for(path):
     if not path:
         return None
     rp = os.path.normcase(os.path.realpath(path))
-    best = None
+    best, best_len = None, -1
     for r in roots():
         rr = os.path.normcase(os.path.realpath(r))
-        if (rp == rr or rp.startswith(rr + os.sep)) and (best is None or len(rr) > len(best)):
-            best = r
+        if (rp == rr or rp.startswith(rr + os.sep)) and len(rr) > best_len:
+            best, best_len = r, len(rr)
+    m = marked_root(path)
+    if m and len(os.path.normcase(m)) > best_len:
+        best = m
     return load_project(best) if best else None
 
 
@@ -451,6 +471,117 @@ def set_hooks(path, kind):
     return "%s: hooks %s in %s" % (kind, "written" if changed else "already set", path)
 
 
+def unset_hooks(path):
+    """Takes the brain's hooks out of a settings file (the plugin carries them instead). Other hooks stay."""
+    cfg = load_json(path, None)
+    if not cfg or not isinstance(cfg.get("hooks"), dict):
+        return False
+    mine = lambda g: any("brain.py" in h.get("command", "") and " hook" in h.get("command", "") for h in g.get("hooks", []))
+    changed = False
+    for event in list(cfg["hooks"]):
+        groups = cfg["hooks"][event]
+        keep = [g for g in groups if not mine(g)]
+        if len(keep) != len(groups):
+            changed = True
+            if keep:
+                cfg["hooks"][event] = keep
+            else:
+                del cfg["hooks"][event]
+    if not changed:
+        return False
+    if not cfg["hooks"]:
+        del cfg["hooks"]
+    shutil.copy2(path, path + ".before-drama-brain-plugin")
+    write(path, json.dumps(cfg, indent=2) + "\n")
+    return True
+
+
+# ---------------------------------------------------------------- the Claude Code plugin (plugin/ in this folder)
+# Claude reads the gate hooks, the skill and the slash commands from one plugin, installed from this folder itself, so an
+# edit here is live with no reinstall. The hooks file and the skill link name this computer's paths, so `install` writes
+# them on each computer and they are never synced.
+PLUGIN = os.path.join(HERE, "plugin")
+PLUGIN_NAME = "drama-brain"
+PLUGIN_ID = PLUGIN_NAME + "@" + PLUGIN_NAME
+PLUGIN_HOOKS = os.path.join(PLUGIN, "hooks", "hooks.json")
+PLUGIN_SKILL = os.path.join(PLUGIN, "skills", "ai-microdrama-director")
+GATE_EVENTS = (("SessionStart", None), ("UserPromptSubmit", None), ("PreToolUse", "*"))
+
+
+def plugin_hooks():
+    hooks = {}
+    for event, matcher in GATE_EVENTS:
+        g = {"hooks": [{"type": "command", "command": HOOK_CMD, "timeout": 15}]}
+        if matcher:
+            g["matcher"] = matcher
+        hooks[event] = [g]
+    return {"description": "The Drama Brain gate. Written by brain.py install for this computer.", "hooks": hooks}
+
+
+def claude_cli():
+    home = os.path.expanduser("~")
+    for p in (shutil.which("claude"), os.path.join(home, ".local", "bin", "claude"), "/opt/homebrew/bin/claude",
+              "/usr/local/bin/claude", os.path.join(home, ".claude", "local", "claude")):
+        if p and os.path.exists(p):
+            return p
+    return None
+
+
+def plugin_enabled():
+    """True when Claude Code has the brain plugin installed for this user and switched on."""
+    home = os.path.expanduser("~")
+    on = load_json(os.path.join(home, ".claude", "settings.json"), {}).get("enabledPlugins", {}).get(PLUGIN_ID) is True
+    installed = load_json(os.path.join(home, ".claude", "plugins", "installed_plugins.json"), {})
+    return on and PLUGIN_ID in (installed.get("plugins", installed) if isinstance(installed, dict) else {})
+
+
+def plugin_hooks_ok():
+    cfg = load_json(PLUGIN_HOOKS, {}).get("hooks", {})
+    return all(any(HOOK_CMD == h.get("command") for g in cfg.get(ev, []) for h in g.get("hooks", [])) for ev, _ in GATE_EVENTS)
+
+
+def set_plugin():
+    """Installs the brain as a Claude Code plugin. Returns a report line, or None when it could not, so install falls
+    back to hooks in settings.json."""
+    home = os.path.expanduser("~")
+    if not os.path.isfile(os.path.join(PLUGIN, ".claude-plugin", "plugin.json")):
+        return None
+    want = json.dumps(plugin_hooks(), indent=2) + "\n"
+    if not os.path.exists(PLUGIN_HOOKS) or read(PLUGIN_HOOKS) != want:
+        write(PLUGIN_HOOKS, want)
+    shared = os.path.join(home, ".agents", "skills", "ai-microdrama-director")
+    if os.path.isdir(shared) and not os.path.lexists(PLUGIN_SKILL):
+        os.makedirs(os.path.dirname(PLUGIN_SKILL), exist_ok=True)
+        try:
+            os.symlink(shared, PLUGIN_SKILL)
+        except OSError:                                          # Windows without the right to make links
+            shutil.copytree(shared, PLUGIN_SKILL)
+    cli = claude_cli()
+    if not cli:
+        print("plugin: the claude command was not found, so the plugin was not installed")
+        return None
+    if not plugin_enabled():
+        run = lambda *a: subprocess.run([cli, "plugin"] + list(a), capture_output=True, text=True, stdin=subprocess.DEVNULL)
+        run("marketplace", "add", HERE)
+        r = run("install", PLUGIN_ID, "--scope", "user")
+        if not plugin_enabled():
+            run("enable", PLUGIN_ID)
+        if not plugin_enabled():
+            print("plugin: install did not take: %s" % (r.stdout + r.stderr).strip()[:300])
+            return None
+    out = "claude: brain plugin %s installed from %s" % (PLUGIN_ID, PLUGIN)
+    if unset_hooks(os.path.join(home, ".claude", "settings.json")):
+        out += "; old gate hooks removed from settings.json (backup: settings.json.before-drama-brain-plugin)"
+    old = os.path.join(home, ".claude", "skills", "ai-microdrama-director")
+    if os.path.islink(old):
+        os.remove(old)
+        out += "; old skill link removed (the plugin carries the skill)"
+    elif os.path.isdir(old):
+        shutil.move(old, os.path.join(LOCAL, "old-claude-skill-copy-%d" % int(time.time())))
+        out += "; old skill copy moved to local/ (the plugin carries the skill)"
+    return out
+
+
 def set_pointer(root):
     done = []
     block = POINTER % RUN
@@ -471,12 +602,6 @@ def cmd_install(_):
     home = os.path.expanduser("~")
     if not os.path.isdir(STATE):
         os.makedirs(STATE)
-    print(set_hooks(os.path.join(home, ".claude", "settings.json"), "claude"))
-    if os.path.isdir(os.path.join(home, ".codex")):
-        print(set_hooks(os.path.join(home, ".codex", "hooks.json"), "codex"))
-        print("codex: open Codex once and approve the new hooks when it asks (it will not run them until you do).")
-    else:
-        print("codex: no ~/.codex folder on this computer, skipped.")
     skill_src = os.path.join(HERE, "library", "skill")
     shared = os.path.join(home, ".agents", "skills", "ai-microdrama-director")
     is_master = any(os.path.realpath(m.get("from", "")) == os.path.realpath(shared)
@@ -487,8 +612,17 @@ def cmd_install(_):
     elif os.path.isdir(skill_src) and not is_master:             # another computer: bring its copy up to date
         shutil.copytree(skill_src, shared, dirs_exist_ok=True)
         print("skill: updated ai-microdrama-director at %s" % shared)
+    plugged = set_plugin()
+    print(plugged or set_hooks(os.path.join(home, ".claude", "settings.json"), "claude"))
+    if os.path.isdir(os.path.join(home, ".codex")):
+        print(set_hooks(os.path.join(home, ".codex", "hooks.json"), "codex"))
+        print("codex: open Codex once and approve the new hooks when it asks (it will not run them until you do).")
+    else:
+        print("codex: no ~/.codex folder on this computer, skipped.")
     link = os.path.join(home, ".claude", "skills", "ai-microdrama-director")
-    if os.path.exists(shared) and not os.path.lexists(link):
+    if plugged:
+        pass                                                     # Claude gets the skill from the plugin
+    elif os.path.exists(shared) and not os.path.lexists(link):
         os.makedirs(os.path.dirname(link), exist_ok=True)
         try:
             os.symlink(shared, link)
@@ -577,10 +711,18 @@ def cmd_doctor(_):
         print(("ok    " if good else "FIX   ") + text)
         return good
 
+    plugin_on = plugin_enabled()
     for kind, p in (("Claude", os.path.join(home, ".claude", "settings.json")), ("Codex", os.path.join(home, ".codex", "hooks.json"))):
         cfg = load_json(p, {})
         n = sum(1 for ev in ("SessionStart", "UserPromptSubmit", "PreToolUse") for g in cfg.get("hooks", {}).get(ev, [])
                 if any(HOOK_CMD == h.get("command") for h in g.get("hooks", [])))
+        if kind == "Claude" and plugin_on:
+            good = plugin_hooks_ok() and n == 0
+            ok &= line(good, "Claude hooks: carried by the plugin %s (%s)%s" % (PLUGIN_ID, PLUGIN_HOOKS, "" if good else
+                       "  -> run: install (%s)" % ("old hooks still in settings.json too" if n else "plugin hooks file missing or out of date")))
+            skill_ok = os.path.isfile(os.path.join(PLUGIN_SKILL, "SKILL.md"))
+            ok &= line(skill_ok, "Claude skill: ai-microdrama-director in the plugin%s" % ("" if skill_ok else "  -> run: install"))
+            continue
         ok &= line(n == 3, "%s hooks: %d of 3 point at this brain (%s)%s" % (kind, n, p, "" if n == 3 else "  -> run: install"))
     ok &= line(not os.path.exists(os.path.join(HERE, "OFF")), "gate is on (no OFF file)")
     for r in roots():
@@ -667,7 +809,7 @@ def refresh_skill():
     if not os.path.isdir(src) or any(os.path.realpath(m.get("from", "")) == os.path.realpath(shared)
                                      for m in load_json(os.path.join(HERE, "mirrors.json"), [])):
         return
-    targets = [t for t in (shared, link) if os.path.isdir(t) and not os.path.islink(t)]
+    targets = [t for t in (shared, link, PLUGIN_SKILL) if os.path.isdir(t) and not os.path.islink(t)]
     for root, _, files in os.walk(src):
         for f in files:
             s = os.path.join(root, f)
@@ -775,16 +917,23 @@ def cmd_selftest(_):
         c, o, e = fire(paid)
         check("a paid call is still blocked before the user's yes", '"deny"' in o, o + e)
         fire({"hook_event_name": "UserPromptSubmit", "cwd": tmp, "prompt": "Yes make it"})
-        c, o, e = fire(paid)
+        c, o, e = fire(dict(paid, tool_use_id="selftest-call-1"))
         check("the user's yes unlocks the approved job", c == 0 and "deny" not in o, o + e)
-        c, o, e = fire(paid)
+        c, o, e = fire(dict(paid, tool_use_id="selftest-call-1"))
+        check("the same call seen twice is counted once", c == 0 and "deny" not in o, o + e)
+        c, o, e = fire(dict(paid, tool_use_id="selftest-call-2"))
         check("a call beyond the approved jobs is blocked", '"deny"' in o, o + e)
+        nested = os.path.join(tmp, "unregistered-movie", "episodes")
+        os.makedirs(nested)
+        write(os.path.join(tmp, "unregistered-movie", PROJECT_FILE_NAME), SKELETON % ("Self Test Two", "Self Test Two"))
+        c, o, e = fire(tool("echo hi", nested), "selftest-marked-%d" % os.getpid())
+        check("a folder with BRAIN-PROJECT.md is gated even when not registered", '"deny"' in o and "Self Test Two" in o, o + e)
         p = subprocess.run(RUN + ' start "write a script"', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=tmp)
         out = p.stdout.decode("utf-8", "replace")
         check("start prints the core rules and a card", "Core rules" in out and "== Card" in out, out[:200] + p.stderr.decode("utf-8", "replace"))
     finally:
         write(PROJECTS_FILE, json.dumps(before, indent=1) + "\n")
-        for s in (sid, other):
+        for s in (sid, other, "selftest-marked-%d" % os.getpid()):
             if os.path.exists(state_path(s)):
                 os.remove(state_path(s))
         sp = spend_path({"name": "Self Test"})
@@ -816,6 +965,37 @@ Then: brain.py precheck <sheet.md>. Show the user the quote it prints and wait f
 
 def spend_path(project):
     return os.path.join(STATE, "spend-" + re.sub(r"[^A-Za-z0-9]", "_", project["name"])[:60] + ".json")
+
+
+class spend_lock(object):
+    """One gate at a time reads and counts a movie's spend file (hooks can fire side by side)."""
+    def __init__(self, project):
+        self.path = spend_path(project) + ".lock"
+
+    def __enter__(self):
+        os.makedirs(STATE, exist_ok=True)
+        for _ in range(100):                                     # up to about 5 seconds
+            try:
+                os.mkdir(self.path)
+                self.held = True
+                return self
+            except FileExistsError:
+                try:
+                    if time.time() - os.path.getmtime(self.path) > 30:   # left behind by a crash
+                        os.rmdir(self.path)
+                        continue
+                except OSError:
+                    pass
+                time.sleep(0.05)
+        self.held = False
+        return self
+
+    def __exit__(self, *_):
+        if self.held:
+            try:
+                os.rmdir(self.path)
+            except OSError:
+                pass
 
 
 def script_text(project):
@@ -1119,23 +1299,29 @@ def hook_main():
             if missing:
                 return deny("Drama Brain: this spends credits or generates media. Load the card(s) first: %s card %s   then retry."
                             % (RUN, " ".join(missing)))
-            sp = load_json(spend_path(project), {})
-            if sp.get("status") != "approved":
-                return deny("Drama Brain: no approved pre-spend sheet (state: %s). Write the sheet, run %s precheck <sheet.md>, "
-                            "show the user the quote, and wait for their own yes. Format: %s precheck"
-                            % (sp.get("status", "none"), RUN, RUN))
-            calls, secs = spend_cost(tin, sp.get("rate", 6))
-            if sp["used_calls"] + calls > sp["job_count"]:
-                return deny("Drama Brain: the approved sheet allows %d generation(s); %d used. This call would go over. "
-                            "Any retake or extra job needs a new sheet and a new yes." % (sp["job_count"], sp["used_calls"]))
-            if sp.get("seconds") and sp["used_seconds"] + secs > sp["seconds"] + 0.01:
-                return deny("Drama Brain: the approved sheet allows %g seconds; %g used; this call asks for %g." %
-                            (sp["seconds"], sp["used_seconds"], secs))
-            sp["used_calls"] += calls
-            sp["used_seconds"] += secs
-            if sp["used_calls"] >= sp["job_count"]:
-                sp["status"] = "spent"
-            write(spend_path(project), json.dumps(sp))
+            with spend_lock(project):
+                sp = load_json(spend_path(project), {})
+                tuid = str(ev.get("tool_use_id") or "")
+                if tuid and tuid in sp.get("counted", []):
+                    return                                       # the same call seen twice (two copies of the hook): count once
+                if sp.get("status") != "approved":
+                    return deny("Drama Brain: no approved pre-spend sheet (state: %s). Write the sheet, run %s precheck <sheet.md>, "
+                                "show the user the quote, and wait for their own yes. Format: %s precheck"
+                                % (sp.get("status", "none"), RUN, RUN))
+                calls, secs = spend_cost(tin, sp.get("rate", 6))
+                if sp["used_calls"] + calls > sp["job_count"]:
+                    return deny("Drama Brain: the approved sheet allows %d generation(s); %d used. This call would go over. "
+                                "Any retake or extra job needs a new sheet and a new yes." % (sp["job_count"], sp["used_calls"]))
+                if sp.get("seconds") and sp["used_seconds"] + secs > sp["seconds"] + 0.01:
+                    return deny("Drama Brain: the approved sheet allows %g seconds; %g used; this call asks for %g." %
+                                (sp["seconds"], sp["used_seconds"], secs))
+                sp["used_calls"] += calls
+                sp["used_seconds"] += secs
+                if tuid:
+                    sp["counted"] = (sp.get("counted", []) + [tuid])[-100:]
+                if sp["used_calls"] >= sp["job_count"]:
+                    sp["status"] = "spent"
+                write(spend_path(project), json.dumps(sp))
             return
 
 

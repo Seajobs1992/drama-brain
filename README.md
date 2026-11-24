@@ -9,7 +9,7 @@ One shared rule book for making the movies. Claude and Codex both have to read i
 - **Movie files**: each movie folder has its own `BRAIN-PROJECT.md` with that movie's facts (cast, voices, places, where files are) and its list of documents. Nothing about one movie lives in the general cards.
 - **Library** (`library/`): the general guides and the writing skill, carried inside the brain so they travel with it.
 - **Lessons** (`lessons.md`): every correction, dated. The matching card is updated at the same time.
-- **The gate**: a hook in Claude Code and in Codex. In a registered movie folder it blocks every tool that changes or generates anything until the agent has read the brain for its task. Anything that spends credits also needs the credits card. In other folders it does nothing.
+- **The gate**: a hook in Claude Code (carried by the `drama-brain` plugin, below) and in Codex. In a registered movie folder it blocks every tool that changes or generates anything until the agent has read the brain for its task. Anything that spends credits also needs the credits card. In other folders it does nothing.
 
 ## Why it does not eat tokens
 
@@ -86,6 +86,16 @@ The second Chrome extension, at `tools/firefly-kling-runner`, with its guide in 
 
 - **On another computer:** Load unpacked `~/drama-brain/tools/firefly-kling-runner`, then `python3 ~/drama-brain/tools/firefly-kling-runner/build_jobs.py "<movie folder>"`. Its `jobs` folder is built per computer, like the Flow runner's.
 - **Changing it:** same as the Flow runner. The working copy is in the LOCKED OUT folder on the first Mac, and `sync` copies it here.
+
+## The Claude Code plugin
+
+Claude gets the brain as one plugin, `drama-brain`, kept in `plugin/` and installed from this folder itself, so a change here is live with no reinstall (in a running session: `/reload-plugins`).
+
+- **The gate:** the same three hooks (session start, each message, each tool), calling `brain.py hook`. Its hooks file names this computer's Python and path, so `install` writes it on each computer and it is never synced.
+- **The skill:** `ai-microdrama-director`, linked from the plugin to the live copy in `~/.agents/skills` (Codex and `sync` use that copy).
+- **Slash commands:** `/drama-brain:start`, `/drama-brain:card`, `/drama-brain:find`, `/drama-brain:section`, `/drama-brain:lesson`. Each runs `brain.py`, so the gate counts it.
+- **Which folders:** every registered movie, and any folder with a `BRAIN-PROJECT.md` in it or above it.
+- **Set up:** `brain.py install` adds the plugin and removes the old gate hooks from `~/.claude/settings.json`. If the plugin cannot be installed it falls back to those settings hooks. `doctor` checks it.
 
 ## Turning it off
 

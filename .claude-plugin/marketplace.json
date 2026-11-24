@@ -1,0 +1,11 @@
+{
+  "name": "drama-brain",
+  "owner": { "name": "Drama Brain" },
+  "plugins": [
+    {
+      "name": "drama-brain",
+      "source": "./plugin",
+      "description": "The Drama Brain gate, the micro drama skill and the brain's slash commands, read from this folder."
+    }
+  ]
+}

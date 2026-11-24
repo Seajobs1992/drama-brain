@@ -1,0 +1,5 @@
+{
+  "name": "drama-brain",
+  "version": "1.0.0",
+  "description": "Drama Brain for Claude Code: the gate that makes Claude read the core rules and the right card before acting in a movie folder, the ai-microdrama-director skill, and /start, /card, /find, /section, /lesson."
+}
