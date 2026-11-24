@@ -6,7 +6,7 @@
 (() => {
   if (globalThis.PolloPage && globalThis.PolloPage.VERSION) return;
   const P = {};
-  P.VERSION = "1.5.0";
+  P.VERSION = "1.6.0";
 
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   const norm = (s) => (s || "").replace(/\s+/g, " ").trim();
@@ -204,31 +204,70 @@
   // Pollo keeps only the first 25 characters of an upload's name (before the extension).
   const cut = (n) => { const m = String(n).match(/^(.*?)(\.[a-z0-9]+)?$/i); return m[1].slice(0, 25) + (m[2] || ""); };
   const tile = (d, name) => [...d.querySelectorAll("img")].find((i) => (i.alt === name || i.alt === cut(name)) && /^https:/.test(i.src));
-  async function chooseInLibrary(opener, files) {
+  // Close the library without choosing anything. Escape does not close it (checked 24 Nov 2026); its Close button does,
+  // after about 2 seconds.
+  async function closeLibrary() {
+    for (let i = 0; i < 3 && libDialog(); i++) {
+      escape();
+      const d = libDialog();
+      const x = d && [...d.querySelectorAll('button[aria-label="Close" i]')].find(vis);
+      if (x) press(x);
+      await waitFor(() => !libDialog(), 5000, 250);
+    }
+    if (libDialog()) throw new Error("Pollo's picture library would not close");
+  }
+  P.closeLibrary = closeLibrary;
+  async function openLibrary(opener) {
     press(opener);
     const d = await waitFor(libDialog, 8000);
     if (!d) throw new Error("Pollo's picture library did not open");
     const up = [...d.querySelectorAll("button")].find((b) => norm(b.textContent) === "Uploads");
     if (up) { press(up); await sleep(800); }
-    if (selCount(d)) throw new Error("The library already had pictures ticked; nothing was changed");
-    for (const f of files) {
-      if (tile(d, f.name)) continue;
-      const inp = d.querySelector('input[type="file"]');
-      if (!inp) throw new Error("The library has no upload box");
-      const dt = new DataTransfer();
-      dt.items.add(new File([f.buf], f.name, { type: f.type || "image/jpeg" }));
-      inp.files = dt.files;
-      inp.dispatchEvent(new Event("change", { bubbles: true }));
-      if (!(await waitFor(() => { const t = tile(d, f.name); return t && t.complete; }, 120000, 500))) throw new Error(`Upload of ${f.name} did not finish in 2 minutes`);
-      await sleep(800);
+    if (selCount(libDialog() || d)) throw new Error("The library already had pictures ticked; nothing was changed");
+    return libDialog() || d;
+  }
+  // A first upload of a new file can stall in Pollo (24 Nov 2026: a 6 MB PNG and a 0.7 MB JPG each sat over 2 minutes).
+  // So each upload gets 3 tries: wait, then close and reopen the library (the file may have landed but the list
+  // did not refresh), then upload it again. A second copy of the same file is harmless: the bytes are checked later.
+  P.uploadWaits = [120000, 90000, 90000];
+  P.note = () => {};
+  P.chooseInLibrary = (...a) => chooseInLibrary(...a); // used by the free upload test
+  async function chooseInLibrary(opener, files) {
+    let d = await openLibrary(opener);
+    const D = () => libDialog() || d;
+    const ready = (name) => { const t = tile(D(), name); return t && t.complete; };
+    try {
+      for (const f of files) {
+        let ok = !!ready(f.name);
+        for (let a = 0; !ok && a < P.uploadWaits.length; a++) {
+          if (a) {
+            P.note(`Upload of ${f.name} is slow; reopening the library (try ${a + 1} of ${P.uploadWaits.length})`);
+            await closeLibrary();
+            d = await openLibrary(opener);
+            if (await waitFor(() => ready(f.name), 10000, 500)) { ok = true; break; }
+          }
+          const inp = D().querySelector('input[type="file"]');
+          if (!inp) throw new Error("The library has no upload box");
+          const dt = new DataTransfer();
+          dt.items.add(new File([f.buf], f.name, { type: f.type || "image/jpeg" }));
+          inp.files = dt.files;
+          inp.dispatchEvent(new Event("change", { bubbles: true }));
+          ok = !!(await waitFor(() => ready(f.name), P.uploadWaits[a], 500));
+        }
+        if (!ok) throw new Error(`Upload of ${f.name} did not finish after ${P.uploadWaits.length} tries (about ${Math.round(P.uploadWaits.reduce((x, y) => x + y, 0) / 60000)} min)`);
+        await sleep(800);
+      }
+      for (let i = 0; i < files.length; i++) {
+        tile(D(), files[i].name).click();
+        if (!(await waitFor(() => selCount(D()) === i + 1, 4000))) throw new Error(`Could not tick ${files[i].name} in the library`);
+      }
+      selectBtn(D()).click();
+      if (!(await waitFor(() => !libDialog(), 8000))) throw new Error("The library did not close after Select");
+      await sleep(1200);
+    } catch (e) {
+      await closeLibrary().catch(() => {});
+      throw e;
     }
-    for (let i = 0; i < files.length; i++) {
-      tile(d, files[i].name).click();
-      if (!(await waitFor(() => selCount(d) === i + 1, 4000))) throw new Error(`Could not tick ${files[i].name} in the library`);
-    }
-    selectBtn(d).click();
-    if (!(await waitFor(() => !libDialog(), 8000))) throw new Error("The library did not close after Select");
-    await sleep(1200);
   }
 
   P.clear = async () => {

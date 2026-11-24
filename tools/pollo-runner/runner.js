@@ -49,7 +49,10 @@
     records[key] = { ...(records[key] || {}), ...rec };
     await store.set({ records });
   }
-  const finished = (s) => s === "saved" || (s || "").startsWith("failed") || (s || "").startsWith("error");
+  // "skipped" (and an upload error from 1.5.x) means nothing was sent: the next Run tries the job again.
+  const notSent = (s) => /^skipped|^error: Upload of/.test(s || "");
+  const finished = (s) => !notSent(s) && (s === "saved" || (s || "").startsWith("failed") || (s || "").startsWith("error"));
+  const SKIP_STOP = 3; // this many jobs in a row skipped means something on the page is wrong: stop the run
   const typeOf = (f) => (/\.png$/i.test(f) ? "image/png" : /\.webp$/i.test(f) ? "image/webp" : "image/jpeg");
   async function loadFile(f) {
     if (!f) return null;
@@ -74,6 +77,9 @@
       let lastPoll = 0;
       let lastSubmit = 0;
       let holdUntil = 0;
+      const skippedNow = new Set();
+      let skipRow = 0;
+      P.note = (t) => { log(t); };
 
       while (true) {
         const st = await store.get(["running", "queue", "statuses", "settings", "mode", "submitted", "owner"]);
@@ -86,7 +92,7 @@
           break;
         }
         const inFlight = new Set(submitted.map((s) => s.key));
-        const pending = (st.queue || []).filter((k) => byKey[k] && !inFlight.has(k) && !finished(statuses[k]) && (st.mode !== "fill" || statuses[k] !== "filled, not sent"));
+        const pending = (st.queue || []).filter((k) => byKey[k] && !inFlight.has(k) && !skippedNow.has(k) && !finished(statuses[k]) && (st.mode !== "fill" || statuses[k] !== "filled, not sent"));
 
         // ---- 1. collect finished results ----
         if (submitted.length && Date.now() - lastPoll > POLL_EVERY_MS) {
@@ -140,6 +146,7 @@
         if (nextKey && room && gapOk && Date.now() >= holdUntil) {
           const key = nextKey;
           const job = byKey[key];
+          let clicked = false;
           try {
             await setStatus(key, "filling");
             banner(`${key}: loading pictures…\n${submitted.length} generating`);
@@ -170,12 +177,14 @@
             submitted.push(entry);
             await store.set({ submitted });
             await setStatus(key, "sending");
+            clicked = true;
             const videoId = await P.submit(job);
             entry.videoId = videoId;
             await store.set({ submitted });
             lastSubmit = Date.now();
             await setStatus(key, "generating");
             await saveRecord(key, { videoId, submitted: new Date().toISOString() });
+            skipRow = 0;
             await log(`${key}: sent, task ${videoId} (${submitted.length} generating)`);
             // First check straight away: if Pollo charged anything, stop before the next job.
             await sleep(5000);
@@ -186,6 +195,21 @@
             }
           } catch (err) {
             submitted = submitted.filter((x) => !(x.key === key && !x.videoId));
+            if (!clicked && st.mode !== "fill") {
+              // Nothing was sent for this job (it failed while filling or checking): skip it and go on with the others.
+              await store.set({ submitted });
+              await P.closeLibrary().catch(() => {});
+              skippedNow.add(key);
+              skipRow++;
+              await setStatus(key, `skipped: ${err.message} (not sent; Run tries it again)`);
+              if (skipRow >= SKIP_STOP) {
+                await store.set({ running: false });
+                await log(`${key}: ${err.message}. ${SKIP_STOP} jobs in a row could not be filled, so the run stopped. Jobs already sent will be collected when you press Run again.`, "error");
+              } else {
+                await log(`${key}: ${err.message}. Not sent; skipped, carrying on with the others (Run tries it again later).`, "error");
+              }
+              continue;
+            }
             await store.set({ submitted, running: false });
             await setStatus(key, `error: ${err.message}`);
             await log(`${key}: ${err.message}. Run stopped; jobs already sent will be collected when you press Run again.`, "error");
@@ -195,7 +219,7 @@
 
         // ---- 3. done? ----
         if (!pending.length && !submitted.length) {
-          await log("All done.", "ok");
+          await log(skippedNow.size ? `All done, except ${skippedNow.size} skipped (not sent): ${[...skippedNow].join(", ")}. Press Run to try them again.` : "All done.", skippedNow.size ? "error" : "ok");
           await store.set({ running: false });
           break;
         }
