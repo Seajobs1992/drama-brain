@@ -717,9 +717,15 @@ def cmd_doctor(_):
         n = sum(1 for ev in ("SessionStart", "UserPromptSubmit", "PreToolUse") for g in cfg.get("hooks", {}).get(ev, [])
                 if any(HOOK_CMD == h.get("command") for h in g.get("hooks", [])))
         if kind == "Claude" and plugin_on:
-            good = plugin_hooks_ok() and n == 0
+            good = plugin_hooks_ok()
             ok &= line(good, "Claude hooks: carried by the plugin %s (%s)%s" % (PLUGIN_ID, PLUGIN_HOOKS, "" if good else
-                       "  -> run: install (%s)" % ("old hooks still in settings.json too" if n else "plugin hooks file missing or out of date")))
+                       "  -> run: install (plugin hooks file missing or out of date)"))
+            if os.path.lexists(os.path.join(home, ".claude", "skills", "ai-microdrama-director")):
+                print("todo    the old skill link ~/.claude/skills/ai-microdrama-director is kept as a bridge for sessions opened "
+                      "before the plugin. Once those sessions are restarted, run: install")
+            if n:
+                print("todo    the old gate hooks are still in %s as a bridge for Claude sessions opened before the plugin "
+                      "(the gate acts once either way). Once those sessions are restarted, run: install" % p)
             skill_ok = os.path.isfile(os.path.join(PLUGIN_SKILL, "SKILL.md"))
             ok &= line(skill_ok, "Claude skill: ai-microdrama-director in the plugin%s" % ("" if skill_ok else "  -> run: install"))
             continue
@@ -892,6 +898,9 @@ def cmd_selftest(_):
         check("the hook command runs, and a session gets the notice", c == 0 and "Drama Brain" in o, "exit %s %s %s" % (c, o, e))
         c, o, e = fire(tool("echo hi"))
         check("a command is blocked before the brain is read", '"deny"' in o, "exit %s %s %s" % (c, o, e))
+        c1, o1, e1 = fire(dict(tool("echo twice"), tool_use_id="selftest-twice"))
+        c2, o2, e2 = fire(dict(tool("echo twice"), tool_use_id="selftest-twice"))
+        check("a hook wired twice acts once (one deny, the copy stays silent)", '"deny"' in o1 and not o2.strip(), o1 + o2 + e1 + e2)
         c, o, e = fire(tool(RUN + ' start "self test"'))
         check("the brain's own command is let through", c == 0 and "deny" not in o, o + e)
         c, o, e = fire(tool("echo hi"))
@@ -1152,6 +1161,39 @@ def deny(reason):
     emit({"hookSpecificOutput": {"hookEventName": "PreToolUse", "permissionDecision": "deny", "permissionDecisionReason": reason}})
 
 
+def seen_before(ev, event, sid):
+    """True when this same event was already handled a moment ago. The gate can be wired twice for a while (the plugin,
+    and the old settings hooks kept for sessions opened before it), and each event must act once: one notice, one deny,
+    one count. The first copy to claim the event does the work; the other stays silent."""
+    import hashlib
+    if event == "PreToolUse":
+        what = ev.get("tool_use_id")
+    elif event == "UserPromptSubmit":
+        what = ev.get("prompt")
+    elif event == "SessionStart":
+        what = ev.get("source") or "start"
+    else:
+        what = None
+    if not what:
+        return False
+    key = hashlib.sha1(("%s|%s|%s|%s" % (sid, ev.get("agent_id") or "", event, what)).encode("utf-8", "replace")).hexdigest()
+    d = os.path.join(STATE, "seen")
+    p = os.path.join(d, key)
+    try:
+        os.makedirs(d, exist_ok=True)
+        for _ in range(2):
+            try:
+                os.close(os.open(p, os.O_CREAT | os.O_EXCL | os.O_WRONLY))
+                return False                                     # first to claim it
+            except FileExistsError:
+                if time.time() - os.path.getmtime(p) < 10:
+                    return True                                  # the other copy, a moment ago
+                os.remove(p)                                     # an old claim: the same words sent again later
+    except OSError:
+        pass
+    return False
+
+
 def brain_call(command):
     """(subcommand, argument list) if this shell command runs brain.py, else None."""
     m = re.search(r"brain\.py[\"']?\s+([a-z-]+)\b(.*)", command, re.S)
@@ -1188,6 +1230,8 @@ def hook_main():
             project = load_project(parent["root"])
     if project is None:
         return                                                   # not a movie folder: the brain stays out of the way
+    if seen_before(ev, event, sid):
+        return                                                   # another copy of this hook already handled this event
     if st is None:
         st = {"loaded": {}, "pending": [], "root": project["root"], "created": time.time()}
     cards = all_cards()
@@ -1203,8 +1247,12 @@ def hook_main():
         try:                                                     # tidy: forget sessions older than two weeks
             for f in os.listdir(STATE):
                 p = os.path.join(STATE, f)
-                if time.time() - os.path.getmtime(p) > 14 * 86400:
+                if os.path.isfile(p) and time.time() - os.path.getmtime(p) > 14 * 86400:
                     os.remove(p)
+            dup = os.path.join(STATE, "seen")
+            for f in (os.listdir(dup) if os.path.isdir(dup) else []):
+                if time.time() - os.path.getmtime(os.path.join(dup, f)) > 3600:
+                    os.remove(os.path.join(dup, f))
         except OSError:
             pass
         try:

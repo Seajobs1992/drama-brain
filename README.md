@@ -96,6 +96,7 @@ Claude gets the brain as one plugin, `drama-brain`, kept in `plugin/` and instal
 - **Slash commands:** `/drama-brain:start`, `/drama-brain:card`, `/drama-brain:find`, `/drama-brain:section`, `/drama-brain:lesson`. Each runs `brain.py`, so the gate counts it.
 - **Which folders:** every registered movie, and any folder with a `BRAIN-PROJECT.md` in it or above it.
 - **Set up:** `brain.py install` adds the plugin and removes the old gate hooks from `~/.claude/settings.json`. If the plugin cannot be installed it falls back to those settings hooks. `doctor` checks it.
+- **Wired twice for a while:** on 24 Nov 2026 the old settings hooks and the old `~/.claude/skills` link were kept as a bridge for sessions opened before the plugin. The gate acts once per event even when both copies run. Once those sessions are restarted, `install` removes the bridge; `doctor` shows it as a todo until then.
 
 ## Turning it off
 
