@@ -67,6 +67,98 @@ Sources: Alibaba Model Studio's Wan 3.0 generation and prompt guides, Pollo's do
 
 **Subtle motion:** Wan avoids fast repeated motion, so a "trembling hand" barely shows. Describe what we see ("the ring shakes visibly in his palm") and give it its own short insert, ideally with an end frame.
 
+## Wan 3.0 working recipe (user-approved, 23 and 24 November 2026)
+
+This is what produced approved clips on The Man They Erased (period Korean faces, English dialogue, graded and upscaled keyframes). It was found by paid trial and error and it overrides the older Wan notes above wherever they differ. Verify price and limits live.
+
+**References**
+- The graded keyframe is the ONLY reference. No character sheets, no face pictures, no location picture, no audio, no reference video. Proven with an identical prompt: with the character sheet attached the mouth barely moved; with it removed the lips synced.
+- Never use a frame pulled from a clip as the keyframe. Its background is blurred, and Wan invented a new wall and extra people.
+- Every speaker's face must be visible in the keyframe. If one is not, say so before the quote and plan how the camera reaches that face.
+
+**Mode per shot**
+- Dialogue: reference-to-video with the keyframe named `keyframe`, cited as `[@keyframe]`.
+- Silent: image-to-video with the graded image as the true first frame (this locks the grade and the set). Add an end frame when an action must land. Middle beats go in words.
+
+**Prompt form (the user's own, keep it this short)**
+
+Single speaker:
+
+    Single continuous 5s cinematic shot. The young woman in [@keyframe] stands exactly as shown, before the painted scroll, lantern on the right. Preserve identity, clothing, position and environment. 85mm lens, f/1.4, shallow depth of field.
+
+    00:00–00:00.5: Medium shot. She takes a subtle breath as the camera pushes towards her face.
+
+    00:00.5–00:03.5: Medium close-up. She looks at the guests off-screen right and says in English: “exact line” Lip sync. Quiet, steady female voice, natural mouth articulation.
+
+    00:03.5–00:05: She closes her mouth and maintains her gaze.
+
+    Photorealistic 35mm film aesthetic, subtle grain, natural colours, warm lantern light, creamy background blur.
+
+    Audio: English dialogue only, hushed hall ambience. No music, no narration, no voice-over, no additional dialogue, no other languages, no subtitles or on-screen text. NO native language, pure English dialogue, lip sync to the dialogue.
+
+Two speakers in one shot (the multi-speaker form):
+
+    Single continuous 7s cinematic shot. The man in the beige jacket and the man in the blue-grey robe stand exactly as in [@keyframe], <place, two set items>. Preserve identities, clothing, positions and environment exactly as in [@keyframe]. 50mm lens, f/1.8, shallow depth of field.
+
+    00:00–00:00.5: Wide shot. Both mouths closed. Camera glides in towards the face of the man in the beige jacket.
+
+    00:00.5–00:03.5: Stable medium close-up of the man in the beige jacket. He ... says in English: “line one” Lip sync. Sharp, low male voice. The other man remains silent.
+
+    00:03.5–00:04: Both mouths closed. Camera smoothly pans to the face of the man in the blue-grey robe.
+
+    00:04–00:06.5: Stable medium close-up of the man in the blue-grey robe. He ... says in English: “line two” Lip sync. Stiff male voice. The man in beige remains silent.
+
+    00:06.5–00:07: Camera eases back to a two-shot. Both look at <target>, never into the lens.
+
+    Photorealistic 35mm film aesthetic, subtle grain, natural colours, <light>, creamy background blur.
+
+    Audio: Exact English dialogue synchronised with each speaker’s mouth, <ambience>. No overlapping speech, music, narration, voice-over or subtitles, no other languages. NO native language, pure English dialogue, lip sync to the dialogue.
+
+**User's working single-speaker prompt (24 Nov 2026, Episode 2 C21, "This prompt works"). Model to copy: short, the camera reaches a stable medium close-up before the line, the speaker named by clothing, a natural pause asked for between sentences:**
+
+    Single continuous 4s cinematic shot. The man in [@image1] stands at the top of the stairs, half turned back. Preserve identity, clothing, position and environment. Eye-level medium shot, three-quarter angle, slow cinematic push-in. 50mm lens, f/1.8, shallow depth of field.
+
+    00:00–00:00.5: Camera gently pushes towards his face.
+
+    00:00.5–00:03.5: Stable medium close-up. The man in beige says in English: "I sent letters. Every month." Lip sync. Low, quiet male voice, with a brief natural pause between sentences.
+
+    00:03.5–00:04: He holds his gaze without moving closer.
+
+    Photorealistic 35mm film aesthetic, subtle grain, natural colours, warm lantern light, creamy background blur.
+
+    Audio: English dialogue, subtle hall ambience. No music, narration, voice-over or subtitles.
+
+**English speech lock (user, 24 Nov 2026: "Next batch we will add this to our prompt"). Add to EVERY Wan dialogue prompt, single or multi speaker, word for word, after the Audio line:**
+
+    Speech language: English (en-US).
+
+    The character speaks English naturally, with mouth movements precisely matching the audible English phonemes, syllables and speech rhythm.
+
+    Negative prompt list: Korean-language articulation, dubbed speech, mismatched lip-sync, incorrect phonetic movements, unsynchronised audio.
+
+**Rules inside the form**
+- Each timed beat opens with its shot size. The camera travels only in SILENT beats; every speaking beat is a stable close-up. A longer version with the camera moving during the lines failed.
+- Name each person by one clothing tag. Do not list props, hats or set details the frame already shows; over-description confused the model.
+- A speaking face is level and near-frontal, never tipped down, with a stated eye target and "never into the lens".
+- Cinematic direction in every prompt: shot size, the move, lens and aperture. Do not lock the camera unless the user or the plan asks.
+- The line is the script's exact words in double quotes, followed by "Lip sync." and a short voice description. Never name an accent.
+
+**Length**
+- No clip over 7 seconds. Give every second a job. Budget about 3 words a second, plus half-second silent beats for the camera. If the plan says 10 s, aim for 6.
+- Merge consecutive silent beats on one set into one shot (first frame, end frame, middle in words). Put two short lines in one multi-speaker shot rather than two clips.
+
+**Known drifts to check for**
+- When the camera pushes in from a wide keyframe in reference mode, Wan may rebuild the background behind the faces. Naming two set items from the frame helps.
+- A writing hand adds an extra mark even when forbidden. Plan a trim or a hold on the still.
+- A second copy of a prop can appear for a second after a move. Fix in the edit first.
+- Lines can start later than the timecode asks; leave about half a second spare.
+
+**Check every clip before showing it**
+- Transcribe the words with word times. Sheet the clip at 4 frames a second beside its keyframe. Zoom on the speaker's mouth at 6 frames a second with timestamps and compare with when the sound runs. The creator judges the lips.
+
+**Working order**
+- Prove the form on one clip, then batch up to four, each with its own pre-spend sheet row, quote and go.
+
 ## Shot load
 
 Follow [production and quality](production-and-quality.md) for people per shot, the prop state record, gaze targets, timing feasibility, checking footage and the repair cap.

@@ -13,6 +13,7 @@ folder can be copied to another computer and set up with:  python3 brain.py inst
   template character-sheet    the user's fixed prompts, word for word
   lesson "<text>" --card <n>  record a correction so it is not repeated
   new-project <dir> "<Name>"  register a new movie      add-project <dir>   register an existing one
+  precheck <sheet.md>         the pre-spend check; paid tools stay locked until it passes and the user says yes
   install | doctor | selftest | budget | sync
   hook                        the gate, called by Claude Code and Codex hooks (JSON on stdin)
 """
@@ -46,7 +47,7 @@ PY = _python()
 ME = os.path.join(HERE, "brain.py").replace("\\", "/") if WINDOWS else os.path.join(HERE, "brain.py")
 RUN = '%s "%s"' % (PY, ME)
 SUBCOMMANDS = ("start", "card", "cards", "docs", "projects", "section", "find", "template", "lesson",
-               "budget", "doctor", "help", "sync", "new-project", "add-project", "install", "selftest")
+               "budget", "doctor", "help", "sync", "new-project", "add-project", "install", "selftest", "precheck")
 for _s in (sys.stdout, sys.stderr):                              # Windows consoles are not UTF-8 by default
     try:
         _s.reconfigure(encoding="utf-8", errors="replace")
@@ -757,6 +758,27 @@ def cmd_selftest(_):
         check("a paid tool is blocked without the credits card", '"deny"' in o, o + e)
         c, o, e = fire(tool("echo hi", home), other)
         check("folders that are not movies are left alone", c == 0 and not o.strip(), o + e)
+        # the pre-spend lock
+        paid = {"hook_event_name": "PreToolUse", "cwd": tmp, "tool_name": "mcp__pollo__generate_video", "tool_input": {"brand": "x", "model": "y", "input": {"duration": 5, "refs": [{"url": "a"}, {"url": "b"}]}}}
+        fire(tool(RUN + ' start "generate credits" credits'))
+        tick = "checked: " + ", ".join(GATES.get("precheck_ticks", []))
+        bad, good = os.path.join(tmp, "bad.md"), os.path.join(tmp, "good.md")
+        write(bad, "## Job a\nmode: i2v\nfirst: K1\nseconds: 3\n%s\n## Job b\nmode: i2v\nfirst: K1\nseconds: 5\n%s\n" % (tick, tick))
+        write(good, "## Job a\nmode: i2v\nfirst: K1\nseconds: 5\n%s\n" % tick)
+        pre = lambda f: subprocess.run(RUN + ' precheck "%s"' % f, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=tmp)
+        p = pre(bad)
+        check("precheck refuses two clips on the same first frame", p.returncode == 1 and b"merge them" in p.stdout, p.stdout.decode("utf-8", "replace"))
+        c, o, e = fire(paid)
+        check("a paid call is blocked without an approved sheet", '"deny"' in o, o + e)
+        p = pre(good)
+        check("precheck passes a clean sheet", p.returncode == 0, p.stdout.decode("utf-8", "replace"))
+        c, o, e = fire(paid)
+        check("a paid call is still blocked before the user's yes", '"deny"' in o, o + e)
+        fire({"hook_event_name": "UserPromptSubmit", "cwd": tmp, "prompt": "Yes make it"})
+        c, o, e = fire(paid)
+        check("the user's yes unlocks the approved job", c == 0 and "deny" not in o, o + e)
+        c, o, e = fire(paid)
+        check("a call beyond the approved jobs is blocked", '"deny"' in o, o + e)
         p = subprocess.run(RUN + ' start "write a script"', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=tmp)
         out = p.stdout.decode("utf-8", "replace")
         check("start prints the core rules and a card", "Core rules" in out and "== Card" in out, out[:200] + p.stderr.decode("utf-8", "replace"))
@@ -765,9 +787,172 @@ def cmd_selftest(_):
         for s in (sid, other):
             if os.path.exists(state_path(s)):
                 os.remove(state_path(s))
+        sp = spend_path({"name": "Self Test"})
+        if os.path.exists(sp):
+            os.remove(sp)
         shutil.rmtree(tmp, ignore_errors=True)
     print("Self-test: %d of %d passed. Hook command on this computer: %s" % (sum(passed), len(passed), HOOK_CMD))
     return 0 if all(passed) else 1
+
+
+# ---------------------------------------------------------------- the pre-spend lock
+# Nothing paid runs without: (1) the skill read in full this session, (2) a pre-spend sheet that passes `precheck`
+# (duplicates, exact script words, every check ticked), (3) the user's own "yes" typed after the quote, and then
+# (4) no more generation calls than the sheet's jobs. The sheet format is in `precheck` with no file.
+SHEET_HELP = """Pre-spend sheet (markdown). One block per job:
+
+  rate: 6                      credits a second (top of the file, optional, default 6)
+  ## Job 2a
+  mode: i2v                    i2v | ref | t2v | image
+  first: K5                    first frame or keyframe id (ref: the keyframe ref)
+  end: K5e                     end frame, or blank
+  seconds: 6                   or  credits: 12  for an image
+  lines: none                  or the exact script lines in double quotes
+  checked: <ticks>             every tick in gates.json precheck_ticks, comma separated
+  same-first: <reason>         only if two i2v jobs truly need the same first frame
+
+Then: brain.py precheck <sheet.md>. Show the user the quote it prints and wait for their own yes."""
+
+
+def spend_path(project):
+    return os.path.join(STATE, "spend-" + re.sub(r"[^A-Za-z0-9]", "_", project["name"])[:60] + ".json")
+
+
+def script_text(project):
+    for k in GATES.get("script_docs", ["wan-script", "screenplay"]):
+        d = project["docs"].get(k)
+        if d and os.path.isfile(d["path"]):
+            return read(d["path"])
+    return None
+
+
+def squash(s):
+    s = s.replace("’", "'").replace("‘", "'").replace("“", '"').replace("”", '"')
+    return re.sub(r"\s+", " ", s).strip().lower()
+
+
+def parse_sheet(text):
+    rate = 6.0
+    m = re.search(r"^rate:\s*([\d.]+)", text, re.M)
+    if m:
+        rate = float(m.group(1))
+    jobs = []
+    for block in re.split(r"^##\s+", text, flags=re.M)[1:]:
+        head, _, body = block.partition("\n")
+        job = {"id": re.sub(r"^job\s+", "", head.strip(), flags=re.I)}
+        for line in body.splitlines():
+            k, sep, v = line.partition(":")
+            if sep and re.fullmatch(r"[a-z-]+", k.strip().lower()):
+                job[k.strip().lower()] = v.strip()
+        jobs.append(job)
+    return rate, jobs
+
+
+def cmd_precheck(args):
+    if not args:
+        print(SHEET_HELP)
+        return 1
+    project = active_project()
+    if not project:
+        print("precheck: not inside a registered movie folder.")
+        return 1
+    path = os.path.abspath(args[0])
+    if not os.path.isfile(path):
+        print("precheck: no such file: " + path)
+        return 1
+    rate, jobs = parse_sheet(read(path))
+    ticks = [t.lower() for t in GATES.get("precheck_ticks", [])]
+    script = script_text(project)
+    errors, total, seconds = [], 0.0, 0.0
+    if not jobs:
+        errors.append("no '## Job' blocks found")
+    firsts = {}
+    for j in jobs:
+        jid = j["id"]
+        mode = j.get("mode", "").lower()
+        if mode not in ("i2v", "ref", "t2v", "image"):
+            errors.append("%s: mode must be i2v, ref, t2v or image" % jid)
+        if mode != "t2v" and not j.get("first"):
+            errors.append("%s: no first frame / keyframe named" % jid)
+        if j.get("credits"):
+            try:
+                total += float(j["credits"])
+            except ValueError:
+                errors.append("%s: credits is not a number" % jid)
+        elif j.get("seconds"):
+            try:
+                s = float(j["seconds"]); seconds += s; total += s * rate
+            except ValueError:
+                errors.append("%s: seconds is not a number" % jid)
+        else:
+            errors.append("%s: give seconds or credits" % jid)
+        got = [t.strip().lower() for t in j.get("checked", "").split(",") if t.strip()]
+        miss = [t for t in ticks if t not in got]
+        if miss:
+            errors.append("%s: not ticked: %s" % (jid, ", ".join(miss)))
+        lines = re.findall(r'"([^"]+)"', j.get("lines", "").replace("“", '"').replace("”", '"'))
+        if lines and script is None:
+            errors.append("%s: cannot find the script to check the words (gates.json script_docs)" % jid)
+        for ln in lines:
+            if script is not None and squash(ln) not in squash(script):
+                errors.append('%s: line is not word for word in the script: "%s"' % (jid, ln))
+        key = (j.get("first", "").lower(), j.get("end", "").lower())
+        if mode == "i2v" and key[0]:
+            firsts.setdefault(key[0], []).append(j)
+        if key[0] and key[1] and any(o is not j and (o.get("first", "").lower(), o.get("end", "").lower()) == key for o in jobs):
+            errors.append("%s: same first AND end frame as another job: the same picture paid twice" % jid)
+    for f, js in firsts.items():
+        if len(js) > 1 and not all(x.get("same-first") for x in js):
+            errors.append("jobs %s all start on %s: merge them into one clip, or give each a same-first: reason"
+                          % (", ".join(x["id"] for x in js), f))
+    print("PRE-SPEND CHECK: %s" % path)
+    for j in jobs:
+        cost = j.get("credits") or ("%s s" % j.get("seconds", "?"))
+        print("  %-8s %-6s %-10s %s" % (j["id"], j.get("mode", "?"), (j.get("first", "") + (" > " + j["end"] if j.get("end") else ""))[:24], cost))
+    if errors:
+        print("\nFAILED. Fix these, then run precheck again. Nothing may be spent:")
+        for e in errors:
+            print("  - " + e)
+        write(spend_path(project), json.dumps({"status": "failed", "sheet": path, "time": time.time()}))
+        return 1
+    state = {"status": "checked", "sheet": path, "jobs": [j["id"] for j in jobs], "job_count": len(jobs),
+             "seconds": seconds, "total": round(total), "rate": rate, "used_calls": 0, "used_seconds": 0.0,
+             "time": time.time()}
+    write(spend_path(project), json.dumps(state))
+    print("\nPASSED. %d jobs, %g s, %d credits. Show the user this quote and the balance, then STOP and wait." % (len(jobs), seconds, round(total)))
+    print("Paid tools stay locked until the user types their own yes after this check.")
+    return 0
+
+
+def spend_cost(tin, rate):
+    """(calls, seconds) one paid tool call will use, read from its input."""
+    items = None
+    for k in ("items", "tasks", "requests", "generations", "jobs"):      # a batch tool: one generation per entry
+        v = tin.get(k)
+        if isinstance(v, list) and v and all(isinstance(x, dict) for x in v):
+            items = v
+            break
+    items = items or [tin]
+    secs = 0.0
+    for it in items:
+        n = it.get("numOutputs") or (it.get("input") or {}).get("numOutputs") if isinstance(it.get("input"), dict) else it.get("numOutputs")
+        for d in (it, it.get("input") if isinstance(it.get("input"), dict) else {}):
+            got = False
+            for k in ("duration", "seconds", "length"):
+                try:
+                    secs += float(d.get(k)) * max(1, int(n or 1)); got = True; break
+                except (TypeError, ValueError):
+                    continue
+            if got:
+                break
+    calls = sum(max(1, int((it.get("numOutputs") or 1))) for it in items)
+    return calls, secs
+
+
+YES = re.compile(r"^\W*(yes|yeah|yea|yep|go|go ahead|ok|okay|approved?|make (it|them)|do it|proceed|generate( it| them)?|run (it|them|both|all)( all)?)\b", re.I)
+# Refuse only a real hold-off ("wait", "not yet", "don't generate"). Conditions such as "no drift, no mistakes"
+# go with a yes and must not cancel it (23 Nov 2026: the user's "Yes but it must no drift" was misread as a no).
+NO = re.compile(r"^\W*(yes|yeah|ok|okay|run (it|them|both|all))\s*\?|^\W*(yes\W+)?(wait|stop|hold on|hold off|cancel|not yet)\b|\b(not yet|don'?t (do|run|generate|spend|make|start)( it| them| yet)?)\b", re.I)
 
 
 # ---------------------------------------------------------------- the gate (Claude Code and Codex hooks)
@@ -854,6 +1039,13 @@ def hook_main():
         return
 
     if event == "UserPromptSubmit":
+        sp = load_json(spend_path(project), {})
+        prompt = (ev.get("prompt") or "").strip()
+        if sp.get("status") == "checked" and YES.search(prompt) and not NO.search(prompt[:200]):
+            sp.update(status="approved", approved_quote=prompt[:200], approved_time=time.time())
+            write(spend_path(project), json.dumps(sp))
+            context(event, "[Drama Brain] The user approved the pre-spend sheet %s: %d jobs, %d credits. Paid calls are unlocked "
+                           "for exactly those jobs, one take each." % (os.path.basename(sp["sheet"]), sp["job_count"], sp["total"]))
         need = [c for c in expand(pick_cards(ev.get("prompt") or "", cards), cards, project) if c not in st["loaded"]]
         if not need:
             return
@@ -876,7 +1068,25 @@ def hook_main():
         command = " ".join(str(c) for c in command)
     command = str(command or "")
 
+    skill_docs = {os.path.basename(v["path"]): k for k, v in GENERAL_DOCS.items() if v["path"].startswith("library/skill/")}
+    read_skill = None
+    if tool == "Skill" and "ai-microdrama-director" in str(tin.get("skill", "")):
+        read_skill = "skill"
+    elif tool == "Read" and not tin.get("offset") and not tin.get("limit"):
+        fp = str(tin.get("file_path", "")).replace("\\", "/")
+        if "/library/skill/" in fp or "/ai-microdrama-director/" in fp:
+            read_skill = skill_docs.get(os.path.basename(fp))
+    if read_skill:
+        st.setdefault("skill_read", {})[read_skill] = time.time()
+        save()
+
     call = brain_call(command) if command else None
+    if call and call[0] == "precheck":
+        need_skill = [d for d in GATES.get("precheck_skill", []) if d not in st.get("skill_read", {})]
+        if need_skill:
+            paths = ", ".join(os.path.join(HERE, GENERAL_DOCS[d]["path"]).replace("\\", "/") for d in need_skill if d in GENERAL_DOCS)
+            return deny("Drama Brain: read the skill in full (Read tool, whole file, no offset or limit) before the pre-spend check. "
+                        "Not read yet in this session: %s" % paths)
     if call:
         sub, args = call
         got = []
@@ -909,6 +1119,24 @@ def hook_main():
             if missing:
                 return deny("Drama Brain: this spends credits or generates media. Load the card(s) first: %s card %s   then retry."
                             % (RUN, " ".join(missing)))
+            sp = load_json(spend_path(project), {})
+            if sp.get("status") != "approved":
+                return deny("Drama Brain: no approved pre-spend sheet (state: %s). Write the sheet, run %s precheck <sheet.md>, "
+                            "show the user the quote, and wait for their own yes. Format: %s precheck"
+                            % (sp.get("status", "none"), RUN, RUN))
+            calls, secs = spend_cost(tin, sp.get("rate", 6))
+            if sp["used_calls"] + calls > sp["job_count"]:
+                return deny("Drama Brain: the approved sheet allows %d generation(s); %d used. This call would go over. "
+                            "Any retake or extra job needs a new sheet and a new yes." % (sp["job_count"], sp["used_calls"]))
+            if sp.get("seconds") and sp["used_seconds"] + secs > sp["seconds"] + 0.01:
+                return deny("Drama Brain: the approved sheet allows %g seconds; %g used; this call asks for %g." %
+                            (sp["seconds"], sp["used_seconds"], secs))
+            sp["used_calls"] += calls
+            sp["used_seconds"] += secs
+            if sp["used_calls"] >= sp["job_count"]:
+                sp["status"] = "spent"
+            write(spend_path(project), json.dumps(sp))
+            return
 
 
 def main(argv):
@@ -928,7 +1156,7 @@ def main(argv):
         return 0
     table = {"start": cmd_start, "card": cmd_card, "cards": cmd_cards, "docs": cmd_docs, "projects": cmd_projects,
              "section": cmd_section, "find": cmd_find, "template": cmd_template, "lesson": cmd_lesson, "budget": cmd_budget,
-             "doctor": cmd_doctor, "sync": cmd_sync, "install": cmd_install, "selftest": cmd_selftest,
+             "doctor": cmd_doctor, "sync": cmd_sync, "precheck": cmd_precheck, "install": cmd_install, "selftest": cmd_selftest,
              "new-project": cmd_new_project,
              "add-project": cmd_add_project}
     if cmd not in table:
