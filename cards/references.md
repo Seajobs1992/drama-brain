@@ -8,7 +8,7 @@ with: project, credits
 Order of work: references first, inspected, then anything that depends on them.
 
 **Faces and casting**
-- The user chooses every face, ethnicity and voice from an options board (four options). Never pick for them, never proceed on your own pick.
+- The user chooses every face, ethnicity and voice from an options board of TWO options per character (creator, 24 Nov 2026: "2 option is okay, the 4 options waste credit"). Never pick for them, never proceed on your own pick.
 - Voices come from Flow's 30 stock voices: doc `voices` lists them all with their descriptions. Offer three or four that fit, the user picks.
 - First an identity image: head and shoulders, face large. Then the character sheet, built FROM that image.
 - The sheet uses the user's template, word for word: `brain.py template character-sheet`. Never write your own sheet prompt. Three panels: face, full body, headless costume.
@@ -42,3 +42,4 @@ Order of work: references first, inspected, then anything that depends on them.
 - 2026-11-21: Use PAVILION-USER-SELECTED-v1.png as the geometry reference for the existing walkway: two short hall steps beside the left divider post meet a fixed railed wooden walkway in the foreground. Preserve this connection and use the regenerated master for revised hoist ropes.
 - 2026-11-22: The pavilion model test prompt described a bare room (plain walls, four tables, no ornament) for the rich Han house, so both results looked poor; the user's 17 November direction says Han wealth must read as elegant, and the old approved pavilion images set that standard. Rule: before writing any location prompt, open the approved earlier pictures of that place and the user's visual directions, and write the prompt to that standard of richness, set dressing and light. 'No objects the script does not name' means no new story props, not a bare room.
 - 2026-11-22: Opened an old Episode 1 frame (EP01-S023-CONTINUITY-v31) to use as a clip reference after the user had restarted the movie and kept only named locations and faces. Rule: in a restarted movie, use only the references the user explicitly kept; old episode frames and clips are retired unless the user names them.
+- 2026-11-24: Valet restart face options (24 Nov 2026): I queued FOUR face options per character (20 pictures) because the card said four; the creator said two options are enough and four waste credit. Rule: make TWO face options per character, never four, on any route, paid or free.
