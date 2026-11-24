@@ -8,6 +8,16 @@ Blocking can express status: who occupies the doorway, who must cross the room, 
 
 For a prop exchange, record its holder, hand, orientation, movement, contact and final location. For a wound, track side, costume damage, blood and physical limitation. A new close-up must inherit the previous state.
 
+## Staging map before any frame
+
+Before an episode or scene is framed, draw a top-view staging map for every scene and save it in the episode folder (for example `EPxx-STAGING-MAPS.png`). It shows the set (walls, doors, furniture, where the light comes from), where each person stands, which way they face and how they move, and the 180-degree line between the two people who talk.
+
+Place three cameras, all on one side of the line: W, the wide that holds both people; A, the single on person 1, taken from beside person 2; B, the single on person 2, taken from beside person 1. Mark what is really behind each person from the opposite camera: it is never the same background for both. One person always looks screen left, the other screen right, in every shot.
+
+Write the background table from this map, never before it, and show the maps with the shot plan. Every A and B camera gets an empty angle plate made from the approved master, checked against the master and the map, and used as Image 1 for every frame from that camera. A single never borrows the wide master as its background. Every keyframe names its camera (W, A or B), and every single is checked against the wide for spot, background side and eyeline.
+
+All camera angles, movement, lenses and shot sizes still apply. A camera move must not swing across the 180-degree line. Cross it only inside one unbroken take the viewer can see, never with a cut.
+
 ## Background coverage before making locations
 
 Before any location picture is made, go shot by shot and write which way the camera faces and what fills the frame behind the subject at that shot size (a close-up on a stage needs the backdrop; a medium in a doorway needs the doors and what lies beyond). Map each shot to the location picture that supplies that background. Wherever the master shows that area small or not at all, plan a closer view of it, made from the master so it matches. Show this table with the cost of the location pictures.

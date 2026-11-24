@@ -12,6 +12,7 @@ Use the skill `ai-microdrama-director` (doc `skill`). Read its SKILL.md, then on
 - Every episode: the lead's immediate objective, the obstacle, an action, a change in knowledge or power, a cost, and an unresolved consequence. Give the viewer a payoff before the cliffhanger.
 - Characters act only on what they know. Keep claim, proof, recognition and consequence separate. The lead takes part in the reversal.
 - Write the ending and the next opening together.
+- Plan the floor with the scene: where each person stands, faces and moves, and who talks across which line. Continuity is planned, never guessed. The staging map (card `frames`) is drawn from this before any frame.
 - Dialogue: each line has an intention, fits its time, and sounds like that person. Once approved, a line is never reworded downstream (frames, clips, captions).
 - No fixed runtime unless the project file says so: the story needs to breathe.
 - Evidence: the benchmark study (doc `study`) supports story and sampled visual observations. It does not prove why a film got views. Use mechanisms, never copy plots.

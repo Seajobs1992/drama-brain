@@ -988,7 +988,15 @@ def cmd_selftest(_):
         c, o, e = fire(paid)
         check("a paid call is blocked without an approved sheet", '"deny"' in o, o + e)
         p = pre(good)
-        check("precheck passes a clean sheet", p.returncode == 0, p.stdout.decode("utf-8", "replace"))
+        check("precheck refuses a sheet with no staging map", p.returncode == 1 and b"no staging map" in p.stdout,
+              p.stdout.decode("utf-8", "replace"))
+        quiet = os.path.join(tmp, "quiet.md")
+        write(quiet, "staging-map: not needed, an insert of a hand, nobody talks\n" + read(good))
+        p = pre(quiet)
+        check("precheck accepts 'staging-map: not needed, <reason>'", p.returncode == 0, p.stdout.decode("utf-8", "replace"))
+        write(os.path.join(tmp, "EP01-STAGING-MAPS.png"), "map")
+        p = pre(good)
+        check("precheck passes a clean sheet beside a staging map", p.returncode == 0, p.stdout.decode("utf-8", "replace"))
         c, o, e = fire(paid)
         check("a paid call is still blocked before the user's yes", '"deny"' in o, o + e)
         fire({"hook_event_name": "UserPromptSubmit", "cwd": tmp, "prompt": "Yes make it"})
@@ -1034,6 +1042,9 @@ SHEET_HELP = """Pre-spend sheet (markdown). One block per job:
   lines: none                  or the exact script lines in double quotes
   checked: <ticks>             every tick in gates.json precheck_ticks, comma separated
   same-first: <reason>         only if two i2v jobs truly need the same first frame
+
+A *STAGING-MAP* file must be in the sheet's folder or the two above it (card frames). Only a sheet where nobody talks
+may say instead, on its own line:  staging-map: not needed, <reason>
 
 Then: brain.py precheck <sheet.md>. Show the user the quote it prints and wait for their own yes."""
 
@@ -1103,6 +1114,20 @@ def parse_sheet(text):
     return rate, jobs
 
 
+def staging_map_for(sheet):
+    """The first file named *STAGING-MAP* in the sheet's folder or the two folders above it, else None."""
+    d = os.path.dirname(os.path.abspath(sheet))
+    for _ in range(3):
+        try:
+            for f in sorted(os.listdir(d)):
+                if "staging-map" in f.lower() and os.path.isfile(os.path.join(d, f)):
+                    return os.path.join(d, f)
+        except OSError:
+            pass
+        d = os.path.dirname(d)
+    return None
+
+
 def cmd_precheck(args):
     if not args:
         print(SHEET_HELP)
@@ -1121,6 +1146,10 @@ def cmd_precheck(args):
     errors, total, seconds = [], 0.0, 0.0
     if not jobs:
         errors.append("no '## Job' blocks found")
+    if not staging_map_for(path) and not re.search(r"^staging-map:\s*not needed\s*,\s*\S", read(path), re.M | re.I):
+        errors.append("no staging map: put the scene's *STAGING-MAP* file (top-view floor plan, 180-degree line, cameras W, A "
+                      "and B) in this sheet's folder or the two folders above it, or, only if nobody talks, write a line "
+                      "'staging-map: not needed, <reason>' (card frames)")
     firsts = {}
     for j in jobs:
         jid = j["id"]

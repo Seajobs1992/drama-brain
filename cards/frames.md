@@ -7,14 +7,26 @@ with: project
 ---
 **Camera grammar (compulsory, user 24 Nov 2026):** every shot names shot size, angle, movement, lens, aperture and focus from `brain.py section skill-camera "Camera angles and shots"` and varies them to fit the beat. The keyframe shows the shot's opening size and angle.
 
+**Staging map before any frame (compulsory, user 24 Nov 2026)**
+- Before a scene is framed, draw a top-view staging map and save it in the episode folder (`EPxx-STAGING-MAPS.png`, with its source). It shows the set (walls, doors, furniture, where the light comes from), where each person stands, faces and moves, and the 180-degree line between the two who talk.
+- Three cameras, all on ONE side of the line: W, the wide that holds both people; A, the single on person 1, taken from beside person 2; B, the single on person 2, taken from beside person 1.
+- Mark what is really behind each person from the opposite camera. It is never the same background for both. Eyelines: one person always looks screen LEFT, the other screen RIGHT, in every shot.
+- Write the shot plan's background table from the map, never before it. The user sees the maps with the shot plan.
+- Camera grammar still applies. The one limit: no move swings across the 180-degree line. Cross it only inside one unbroken take the viewer can see. Never cut across it.
+- `precheck` refuses a sheet unless a `*STAGING-MAP*` file is in its folder or the two folders above. A sheet where nobody talks says why: `staging-map: not needed, <reason>`.
+
+**Angle plates**
+- Every A and B camera gets an empty angle plate: the set with no people, made from the approved master, showing exactly what is behind that person from that camera. Check it against the master and the map, approve it, then use it as Image 1 for every frame from that camera. A single never borrows the wide master as its background.
+- Every keyframe prompt names its camera (W, A or B) and uses that camera's plate. Before approval, check every single against the wide: same spot, same background side, correct eyeline.
+
 **Before a batch**
 - Re-read the episode's script, its section in doc `locks`, and the previous episode's last frames.
 - List every character, costume state, prop, wound, weather and time of day. Note what changed since the last episode.
-- Write the scene map: compass directions, who stands where, the dialogue axis, where the light comes from.
+- Have the staging map (above) for every scene: compass directions, who stands where, the dialogue axis, where the light comes from.
 - WIDES: put the scene master beside the location authority and the place's first wide shot from an earlier episode. A side-on master is not a street view. (LOCKED OUT 2-15 showed the wrong shop because this was skipped.)
 
 **Every prompt**
-- Image 1 is the scene master for place, layout and light. Then only the references the frame needs, each labelled.
+- Image 1 is the scene master for place, layout and light; for an A or B single it is that camera's angle plate. Then only the references the frame needs, each labelled.
 - Name hands anatomically, LEFT or RIGHT, and say where they sit in the picture.
 - An injury on a character's RIGHT brow sits over the eye nearer the LEFT edge of the picture. Write it that way.
 - Over-the-shoulder: the foreground person is the LISTENER, on their correct side. Say who it is and what shows (hair, coat).
@@ -64,3 +76,4 @@ with: project
 - 2026-11-24: Episode 2 E2-08 (24 Nov 2026): the reaction shot invented four NEW guests instead of the four from the wide E2-01, put an older lady in plum silk (Jeong-suk's costume) and a young lady in green (close to Seo-yeon), showed fear instead of relief, and left the hoist behind them empty though the rescue is happening there. I passed it. Rule: a reaction shot of a crowd uses the SAME people as the scene's wide (crop or edit from that wide), no extra may wear a principal's colours, the expression must match the beat, and any set piece shown must be in its current state.
 - 2026-11-24: 24 Nov 2026: user said Pollo image credits are too much. From now on every still and keyframe for The Man They Erased is made in Adobe Firefly through the user's own extension (tools/firefly-kling-runner with tools/firefly-mcp-bridge). Pollo GPT Image is not used for stills. Wan 3.0 on Pollo stays for clips.
 - 2026-11-24: Episode 2 C18 (24 Nov 2026): his mouth moved with no sound for 1.3 s before the line. Root cause: the keyframe was drawn mid-speech ('speaks low to the steward') with the mouth open, and Wan animates an open mouth as talking from frame 0. Every frame that synced had the mouth closed. Rule: every dialogue keyframe shows the speaker with the MOUTH CLOSED (write 'mouth closed', never 'speaks' or 'about to speak'); check the mouth in every speaking keyframe before quoting a clip, and re-make the still (Firefly) if it is open.
+- 2026-11-24: Episode 3 shed and room (The Man They Erased, 24 Nov 2026): both men ended up standing in the same spot. Do-yun's singles (K08b, K10) had Sang-ho's cart wheel and loom behind him, the wide K13 put Do-yun on Sang-ho's side of the bench, and Jeong-suk (K20, K22) stood against Seo-yeon's scroll wall instead of in the paper doorway. Causes: nobody drew where each person stands or where the cameras go, so the background list was guessed with the sides swapped; and each set had only one empty master, from the wide camera, so the image tool reused that view for the reverses. The user's rule: "If two people are talking to each other on two cameras, one shows the first person, another shows the second person, and a wide captures them both. 180-degree rule set." Rule: staging map first, an empty angle plate for every A and B camera, every frame names its camera, and a single never borrows the wide master.
