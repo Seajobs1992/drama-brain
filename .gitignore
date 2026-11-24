@@ -6,3 +6,4 @@ __pycache__/
 tools/*/jobs/
 plugin/hooks/hooks.json
 plugin/skills/
+plugin-gate/hooks/hooks.json

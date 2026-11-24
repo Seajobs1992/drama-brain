@@ -496,14 +496,20 @@ def unset_hooks(path):
     return True
 
 
-# ---------------------------------------------------------------- the Claude Code plugin (plugin/ in this folder)
-# Claude reads the gate hooks, the skill and the slash commands from one plugin, installed from this folder itself, so an
-# edit here is live with no reinstall. The hooks file and the skill link name this computer's paths, so `install` writes
-# them on each computer and they are never synced.
+# ---------------------------------------------------------------- the Claude Code plugins (in this folder)
+# Two plugins, both read from this folder itself, so an edit here is live with no reinstall:
+#   drama-brain-gate (plugin-gate/): the gate hooks. On for every Claude session, but the hook stays silent outside
+#     movie folders, so it covers every movie folder, its subfolders and ones not registered yet.
+#   drama-brain (plugin/): the skill and the slash commands. Off for the user and switched on only in each movie folder
+#     (its .claude/settings.local.json), so coding and app sessions never see it.
+# The hooks file and the skill link name this computer's paths, so `install` writes them and they are never synced.
+MARKET = "drama-brain"
 PLUGIN = os.path.join(HERE, "plugin")
-PLUGIN_NAME = "drama-brain"
-PLUGIN_ID = PLUGIN_NAME + "@" + PLUGIN_NAME
-PLUGIN_HOOKS = os.path.join(PLUGIN, "hooks", "hooks.json")
+PLUGIN_ID = "drama-brain@" + MARKET
+GATE_PLUGIN = os.path.join(HERE, "plugin-gate")
+GATE_ID = "drama-brain-gate@" + MARKET
+PLUGIN_HOOKS = os.path.join(GATE_PLUGIN, "hooks", "hooks.json")
+OLD_PLUGIN_HOOKS = os.path.join(PLUGIN, "hooks", "hooks.json")      # where the gate lived before 24 Nov 2026 evening
 PLUGIN_SKILL = os.path.join(PLUGIN, "skills", "ai-microdrama-director")
 GATE_EVENTS = (("SessionStart", None), ("UserPromptSubmit", None), ("PreToolUse", "*"))
 
@@ -527,12 +533,26 @@ def claude_cli():
     return None
 
 
+def user_settings_path():
+    return os.path.join(os.path.expanduser("~"), ".claude", "settings.json")
+
+
+def user_enabled(pid):
+    return load_json(user_settings_path(), {}).get("enabledPlugins", {}).get(pid)
+
+
+def installed(pid):
+    data = load_json(os.path.join(os.path.expanduser("~"), ".claude", "plugins", "installed_plugins.json"), {})
+    return isinstance(data, dict) and pid in data.get("plugins", data)
+
+
+def gate_enabled():
+    """True when Claude Code has the gate plugin installed for this user and switched on."""
+    return user_enabled(GATE_ID) is True and installed(GATE_ID)
+
+
 def plugin_enabled():
-    """True when Claude Code has the brain plugin installed for this user and switched on."""
-    home = os.path.expanduser("~")
-    on = load_json(os.path.join(home, ".claude", "settings.json"), {}).get("enabledPlugins", {}).get(PLUGIN_ID) is True
-    installed = load_json(os.path.join(home, ".claude", "plugins", "installed_plugins.json"), {})
-    return on and PLUGIN_ID in (installed.get("plugins", installed) if isinstance(installed, dict) else {})
+    return gate_enabled()
 
 
 def plugin_hooks_ok():
@@ -540,11 +560,36 @@ def plugin_hooks_ok():
     return all(any(HOOK_CMD == h.get("command") for g in cfg.get(ev, []) for h in g.get("hooks", [])) for ev, _ in GATE_EVENTS)
 
 
+def movie_settings(root):
+    return os.path.join(root, ".claude", "settings.local.json")
+
+
+def enabled_in(root):
+    return load_json(movie_settings(root), {}).get("enabledPlugins", {}).get(PLUGIN_ID) is True
+
+
+def enable_in(root):
+    """Switches the skill plugin on for one movie folder only. True when it changed something."""
+    if not os.path.isdir(root) or not os.path.isfile(os.path.join(PLUGIN, ".claude-plugin", "plugin.json")):
+        return False
+    p = movie_settings(root)
+    cfg = load_json(p, None)
+    if cfg is None:
+        if os.path.exists(p) and read(p).strip():
+            return False                                         # a file we cannot read: leave it alone
+        cfg = {}
+    if cfg.get("enabledPlugins", {}).get(PLUGIN_ID) is True:
+        return False
+    cfg.setdefault("enabledPlugins", {})[PLUGIN_ID] = True
+    write(p, json.dumps(cfg, indent=2) + "\n")
+    return True
+
+
 def set_plugin():
-    """Installs the brain as a Claude Code plugin. Returns a report line, or None when it could not, so install falls
-    back to hooks in settings.json."""
+    """Installs the gate plugin for every session and the skill plugin for movie folders only. Returns a report line,
+    or None when it could not, so install falls back to hooks in settings.json."""
     home = os.path.expanduser("~")
-    if not os.path.isfile(os.path.join(PLUGIN, ".claude-plugin", "plugin.json")):
+    if not os.path.isfile(os.path.join(GATE_PLUGIN, ".claude-plugin", "plugin.json")):
         return None
     want = json.dumps(plugin_hooks(), indent=2) + "\n"
     if not os.path.exists(PLUGIN_HOOKS) or read(PLUGIN_HOOKS) != want:
@@ -558,19 +603,31 @@ def set_plugin():
             shutil.copytree(shared, PLUGIN_SKILL)
     cli = claude_cli()
     if not cli:
-        print("plugin: the claude command was not found, so the plugin was not installed")
+        print("plugin: the claude command was not found, so the plugins were not installed")
         return None
-    if not plugin_enabled():
-        run = lambda *a: subprocess.run([cli, "plugin"] + list(a), capture_output=True, text=True, stdin=subprocess.DEVNULL)
-        run("marketplace", "add", HERE)
-        r = run("install", PLUGIN_ID, "--scope", "user")
-        if not plugin_enabled():
-            run("enable", PLUGIN_ID)
-        if not plugin_enabled():
-            print("plugin: install did not take: %s" % (r.stdout + r.stderr).strip()[:300])
+    run = lambda *a: subprocess.run([cli, "plugin"] + list(a), capture_output=True, text=True, stdin=subprocess.DEVNULL)
+    run("marketplace", "add", HERE)
+    run("marketplace", "update", MARKET)
+    if not gate_enabled():
+        r = run("install", GATE_ID, "--scope", "user")
+        if not gate_enabled():
+            run("enable", GATE_ID, "--scope", "user")
+        if not gate_enabled():
+            print("plugin: the gate plugin did not install: %s" % (r.stdout + r.stderr).strip()[:300])
             return None
-    out = "claude: brain plugin %s installed from %s" % (PLUGIN_ID, PLUGIN)
-    if unset_hooks(os.path.join(home, ".claude", "settings.json")):
+    if os.path.exists(OLD_PLUGIN_HOOKS):
+        os.remove(OLD_PLUGIN_HOOKS)                              # the gate now lives in the gate plugin only
+    if not installed(PLUGIN_ID):
+        run("install", PLUGIN_ID, "--scope", "user")
+    if user_enabled(PLUGIN_ID) is not False:                     # off for the user: each movie folder switches it on
+        run("disable", PLUGIN_ID, "--scope", "user")
+        if user_enabled(PLUGIN_ID) is not False:
+            cfg = load_json(user_settings_path(), {})
+            cfg.setdefault("enabledPlugins", {})[PLUGIN_ID] = False
+            write(user_settings_path(), json.dumps(cfg, indent=2) + "\n")
+    out = ("claude: gate plugin %s on for every session (it acts only in movie folders); skill plugin %s on in movie "
+           "folders only" % (GATE_ID, PLUGIN_ID))
+    if unset_hooks(user_settings_path()):
         out += "; old gate hooks removed from settings.json (backup: settings.json.before-drama-brain-plugin)"
     old = os.path.join(home, ".claude", "skills", "ai-microdrama-director")
     if os.path.islink(old):
@@ -636,7 +693,9 @@ def cmd_install(_):
     for r in roots():
         if os.path.isdir(r):
             d = set_pointer(r)
-            print("movie %s: %s" % (r, "pointer written to " + ", ".join(d) if d else "pointer already in place"))
+            on = plugged and load_project(r) and enable_in(r)
+            print("movie %s: %s%s" % (r, "pointer written to " + ", ".join(d) if d else "pointer already in place",
+                                     "; skill plugin switched on here" if on else ""))
         else:
             print("movie %s: folder not reachable now" % r)
     if not roots():
@@ -685,6 +744,7 @@ def cmd_new_project(args):
         write(p, SKELETON % (name, name))
     register(root)
     set_pointer(root)
+    enable_in(root)
     print("Registered %s at %s. Fill in %s. Load card new-movie for the order of work." % (name, root, p))
     print("The project file lists a bible and a continuity file that do not exist yet. That is expected: they are "
           "written as the movie is developed (steps 2 and 4 on card new-movie).")
@@ -700,6 +760,7 @@ def cmd_add_project(args):
         return 1
     register(root)
     set_pointer(root)
+    enable_in(root)
     print("Registered %s" % root)
 
 
@@ -717,9 +778,12 @@ def cmd_doctor(_):
         n = sum(1 for ev in ("SessionStart", "UserPromptSubmit", "PreToolUse") for g in cfg.get("hooks", {}).get(ev, [])
                 if any(HOOK_CMD == h.get("command") for h in g.get("hooks", [])))
         if kind == "Claude" and plugin_on:
-            good = plugin_hooks_ok()
-            ok &= line(good, "Claude hooks: carried by the plugin %s (%s)%s" % (PLUGIN_ID, PLUGIN_HOOKS, "" if good else
-                       "  -> run: install (plugin hooks file missing or out of date)"))
+            good = plugin_hooks_ok() and not os.path.exists(OLD_PLUGIN_HOOKS)
+            ok &= line(good, "Claude gate: carried by the plugin %s, on for every session (%s)%s" % (GATE_ID, PLUGIN_HOOKS, "" if good else
+                       "  -> run: install (plugin hooks file missing, out of date, or also in the old place)"))
+            off = user_enabled(PLUGIN_ID) is False
+            ok &= line(off, "Claude skill plugin %s: %s" % (PLUGIN_ID, "off outside movie folders" if off else
+                       "on for every session, not only movies  -> run: install"))
             if os.path.lexists(os.path.join(home, ".claude", "skills", "ai-microdrama-director")):
                 print("todo    the old skill link ~/.claude/skills/ai-microdrama-director is kept as a bridge for sessions opened "
                       "before the plugin. Once those sessions are restarted, run: install")
@@ -734,6 +798,8 @@ def cmd_doctor(_):
     for r in roots():
         p = load_project(r)
         ok &= line(p is not None, "movie %s%s" % (r, "" if p else ": not reachable now, or no " + PROJECT_FILE_NAME))
+        if p and plugin_on and not enabled_in(r):
+            ok = line(False, "movie %s: the skill plugin is not switched on here  -> run: install" % r)
         if p:
             for k, d in sorted(p["docs"].items()):
                 if not os.path.exists(d["path"]):
@@ -1257,6 +1323,11 @@ def hook_main():
             pass
         try:
             quiet_pull()
+        except Exception:
+            pass
+        try:                                                     # next session here gets the skill and commands too
+            if gate_enabled():
+                enable_in(project["root"])
         except Exception:
             pass
         again = "Your context was compacted, so the rules you had loaded are gone. " if ev.get("source") == "compact" else ""

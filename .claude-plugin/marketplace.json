@@ -1,11 +1,19 @@
 {
   "name": "drama-brain",
-  "owner": { "name": "Drama Brain" },
+  "owner": {
+    "name": "Drama Brain"
+  },
   "plugins": [
+    {
+      "name": "drama-brain-gate",
+      "source": "./plugin-gate",
+      "description": "The gate: on everywhere, acts only in movie folders."
+    },
     {
       "name": "drama-brain",
       "source": "./plugin",
-      "description": "The Drama Brain gate, the micro drama skill and the brain's slash commands, read from this folder."
+      "description": "The micro drama skill and the brain's slash commands. Switched on only in movie folders."
     }
-  ]
+  ],
+  "description": "The Drama Brain for short dramas: the gate, the micro drama skill and the brain's slash commands."
 }
