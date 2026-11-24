@@ -56,6 +56,7 @@ async function render() {
   $("maxActive").value = String(set.maxActive);
   $("gapSec").value = String(set.gapSec);
   $("timeoutMin").value = String(set.timeoutMin);
+  $("autoStart").checked = (await store.get("autoStart")).autoStart !== false;
   $("log").textContent = (st.log || []).slice(-80).join("\n");
   $("log").scrollTop = 1e9;
   count();
@@ -124,6 +125,10 @@ async function start(mode) {
 }
 
 $("folderBtn").onclick = () => openSaver();
+$("autoStart").onchange = async () => {
+  await store.set({ autoStart: $("autoStart").checked, autoWaitMsg: "" });
+  msg($("autoStart").checked ? "New builds will start by themselves." : "New builds wait for Run ticked.");
+};
 $("fill").onclick = () => start("fill");
 $("run").onclick = () => start("run");
 $("stop").onclick = async () => { await store.set({ running: false }); msg("Stopping after the current step."); };

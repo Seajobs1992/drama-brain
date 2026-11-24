@@ -144,7 +144,11 @@ for src in sources():
         except ValueError as e:
             problems.append(f"{os.path.relpath(src, ROOT)} {it.get('id', '?')}: {e}")
 
-data = {"movie": MOVIE, "outRoot": safe(MOVIE), "built": datetime.datetime.now().strftime("%Y-%m-%d %H:%M"), "jobs": out}
+# "autorun": the runner starts this build by itself (popup switch "Start new builds by itself"). --no-autorun turns it off.
+# "buildId" tells two builds apart even within the same minute.
+_now = datetime.datetime.now()
+data = {"movie": MOVIE, "outRoot": safe(MOVIE), "built": _now.strftime("%Y-%m-%d %H:%M"), "buildId": _now.strftime("%Y%m%d-%H%M%S-%f"),
+        "autorun": "--no-autorun" not in sys.argv[2:], "jobs": out}
 json.dump(data, open(os.path.join(HERE, "jobs", "jobs.json"), "w"), indent=1)
 n_img = sum(1 for j in out if j["type"] == "image")
 print(f"{len(out)} jobs written ({n_img} pictures, {len(out) - n_img} clips) from {len(sources())} file(s) in {MOVIE}.")
@@ -152,4 +156,5 @@ if problems:
     print("SKIPPED (fix and run again):")
     for p in problems:
         print("  - " + p)
-print("Now press the reload arrow on Pollo Runner in chrome://extensions, then reload the Pollo tab.")
+print("Auto-run: the runner starts the not-saved jobs by itself within a minute (if the popup switch is on)." if data["autorun"] else "Auto-run off for this build (--no-autorun).")
+print("Close and reopen the Pollo Runner popup: the footer shows the new job count. (Reload the extension only if the runner code changed.)")

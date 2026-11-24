@@ -43,6 +43,7 @@
     <label>At once <select id="maxActive"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select></label>
     <label>Pause between jobs <select id="gapSec"><option>0</option><option>3</option><option>5</option><option>10</option><option>15</option><option>20</option><option>30</option><option>45</option><option>60</option><option>120</option></select> s</label>
     <label>Give up after <select id="timeoutMin"><option>10</option><option>15</option><option>20</option><option>30</option><option>40</option><option>60</option><option>90</option><option>120</option></select> min</label>
+    <label title="When build_jobs.py writes a new job list, the runner ticks the not-saved jobs and starts by itself (Pollo tab open, Saver folder allowed, no run going)."><input type="checkbox" id="autoStart"> Start new builds by itself</label>
   </div>
   <div class="row">
     <span class="sub">Tick:</span>

@@ -69,7 +69,7 @@ Then build and reload:
 cd "/Volumes/MAC/NEW DRAM/tools/pollo-runner" && python3 build_jobs.py "<movie folder>"
 ```
 
-Press the reload arrow on Pollo Runner in `chrome://extensions`, then reload the Pollo tab. The popup's footer shows how many jobs it has and when they were built.
+Since 24 Nov 2026 the runner reads the job list and pictures fresh from disk (no cache), so a new build shows up when you close and reopen the popup: no extension reload is needed. Reload the extension (and then the Pollo tab) only when the runner's own code changes. The popup's footer shows how many jobs it has and when they were built. (Not yet confirmed in Chrome at the time of writing.)
 
 ## Output folder (asked before the first run of each movie)
 
@@ -90,6 +90,23 @@ Chrome extensions can only save inside Chrome's own download folder, so the runn
 6. **Redo ticked** clears the status of ticked jobs so Run sends them again (a new take saves as `<id> (1).png`; nothing is overwritten). Only for a fault the edit cannot hide.
 
 Every step, the task ids and errors show in the popup log and on a small banner in the Pollo tab.
+
+## Auto-run: new builds start by themselves (1.7.0)
+
+When `build_jobs.py` writes a new job list, the runner starts it without anyone pressing Run ticked.
+- Every 30 s the extension reads `jobs/jobs.json`. A build marked `"autorun": true` (the builder writes this by default; `--no-autorun` turns it off for one build) with a new `buildId` is started once, when all of these hold:
+  - the popup switch **Start new builds by itself** is on (on by default);
+  - a Pollo tab is open and the runner answers in it;
+  - the Saver tab is open, has a folder for this movie, and access is allowed;
+  - no run is going (a new build waits for the current run to end).
+- It ticks every job that is not saved and not failed (same as **Not saved**; skipped jobs count as not sent) and starts the same loop as **Run ticked**, with the popup's At once, Pause and Give up settings. Every guard stays: Unlimited only, charged means stop, byte checks, never sent twice.
+- The log shows "Auto-run started: N job(s) from build …". If a condition is missing, it logs one line, for example "Auto-run waiting: press Allow access in the Saver tab", and tries again every 30 s.
+- With the switch off, a new build is left alone (turning the switch on later does not start it; press Run ticked).
+- A job list built before 1.7.0 has no `"autorun"`, so it never starts by itself. Build again to start it.
+
+**Install once:** chrome://extensions, press reload on Pollo Runner, then reload the Pollo tab. Keep the Pollo tab and the pinned Saver tab open.
+
+**Test:** run `build_jobs.py` for the movie, wait up to a minute, and look at the popup log for "Auto-run started" (or the waiting line that says what is missing).
 
 ## Good to know
 
@@ -122,4 +139,5 @@ Every step, the task ids and errors show in the popup log and on a small banner 
 - **First full run in the creator's Chrome (1.3.0), 24 Nov 2026 16:31-16:39, unattended:** T-img (GPT Image 2, 2 refs, 1440x2560), T-frames (H3 start + end, 768x1344, 5.2 s, sound) and T-ref (H3 Reference, @ chips in place) all saved with their .json (task id, record, 0 credits). Balance 33,691 unchanged. Each about 1 minute from sending to saved. Saved in Chrome's download folder (the Saver tab came in 1.5.0 and had not been run in Chrome yet).
 - **1.5.0 in the creator's Chrome, 24 Nov 2026 16:45-16:48:** T-ref with the Saver tab: "pictures checked byte for byte (2 picture(s), 3 @ in the prompt)", sent, saved into the chosen folder as `EP00/T-ref.mp4` + `T-ref.json` (task id, record 144316261, 0 credits). Clip correct.
 - **1.6.0, 24 Nov 2026 18:40-18:50, free (no Generate pressed):** in the built-in browser's Pollo tab, a forced slow upload was found after the library was closed and reopened, and the picture was attached; a forced stall failed cleanly after 3 tries with the library closed. Offline run of `runner.js`: with one job's upload failing, the other 3 were sent and saved and the failed one was marked skipped; with 3 in a row failing, the run stopped.
+- **1.7.0 auto-run, 24 Nov 2026, offline:** `background.js` with a mocked Chrome: an old build without "autorun" was left alone; a new build waited, with one log line each, for the Pollo tab, the Saver tab, Allow access and a running run; then it started once with only the not-saved, not-failed jobs ticked, and never a second time; with the switch off a new build was left alone; a build with nothing open logged "nothing new to send". `build_jobs.py` (scratch copy) wrote "autorun": true and a buildId, and false with --no-autorun. Not yet run in the creator's Chrome.
 - Note: on the flat cartoon test still, H3 drew faint moving streaks on the plain background in both test clips (model behaviour, not the runner). Check this on the first real film still. The extension's Chrome side (popup, downloads) was not yet run in the creator's Chrome at the time of writing.
