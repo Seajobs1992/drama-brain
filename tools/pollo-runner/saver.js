@@ -96,6 +96,40 @@ async function save(m) {
   return { ok: true, filename: shown };
 }
 
+// Every new runner log line is also written to <output folder>/runner-log.txt (25 Nov 2026), so the log can be read
+// from disk. Lines wait in memory while the folder has no access, and are written once access is allowed.
+let logWaiting = [];
+let logChain = Promise.resolve();
+async function writeLogLines() {
+  if (!logWaiting.length) return;
+  const r = await chrome.runtime.sendMessage({ type: "getJobs" }).catch(() => null);
+  const mv = (r && r.ok && r.movie) || movie;
+  const h = mv && (await getFolder(mv));
+  if (!h || (await h.queryPermission({ mode: "readwrite" })) !== "granted") return;
+  const lines = logWaiting;
+  logWaiting = [];
+  const fh = await h.getFileHandle("runner-log.txt", { create: true });
+  const size = (await fh.getFile()).size;
+  const w = await fh.createWritable({ keepExistingData: true });
+  await w.seek(size);
+  await w.write(lines.join("\n") + "\n");
+  await w.close();
+}
+function queueLog(lines) {
+  const day = new Date().toLocaleDateString("en-CA");
+  logWaiting.push(...lines.map((l) => `${day} ${l}`));
+  logChain = logChain.then(writeLogLines).catch((e) => addLog(`Could not write runner-log.txt: ${e.message}`));
+}
+chrome.storage.onChanged.addListener((ch, area) => {
+  if (area !== "local" || !ch.log) return;
+  const now = ch.log.newValue || [], before = ch.log.oldValue || [];
+  const last = before[before.length - 1];
+  const from = last === undefined ? 0 : now.lastIndexOf(last) + 1;
+  if (from > 0 || last === undefined) { if (now.length > from) queueLog(now.slice(from)); }
+  else if (now.length) queueLog(now.slice(-1));
+});
+setInterval(() => { if (logWaiting.length) logChain = logChain.then(writeLogLines).catch(() => {}); }, 30000);
+
 chrome.runtime.onMessage.addListener((m, _sender, send) => {
   if (!m || m.target !== "saver") return false;
   if (m.type === "status") { status(m.movie).then(send); return true; }

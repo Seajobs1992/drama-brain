@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Pollo Runner",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "description": "Fills Pollo.ai with each job (pictures, prompt, free Unlimited settings), sends it, waits, and saves the result named by job ID. Never sends a job unless Pollo shows Unlimited.",
   "permissions": ["downloads", "storage", "alarms"],
   "host_permissions": ["https://pollo.ai/*", "https://videocdn.pollo.ai/*"],

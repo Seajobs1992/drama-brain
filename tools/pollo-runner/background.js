@@ -89,7 +89,7 @@ chrome.downloads.onDeterminingFilename.addListener((item, suggest) => {
 // stay (Unlimited only, charged means stop, byte checks). A build is started once; nothing is ever sent twice.
 const store = chrome.storage.local;
 const keyOf = (j) => `${j.episode}/${j.id}`;
-const openStatus = (s) => (s || "") !== "saved" && (/^skipped|^error: Upload of/.test(s || "") || !/^(failed|error)/.test(s || ""));
+const openStatus = (s) => (s || "") !== "saved" && (/^skipped|^retrying|^error: Upload of/.test(s || "") || !/^(failed|error)/.test(s || ""));
 
 async function bgLog(text) {
   const { log = [] } = await store.get("log");

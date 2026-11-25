@@ -109,7 +109,7 @@ async function start(mode) {
   await saveSettings();
   // Saved and failed jobs are skipped until "Redo ticked"; say so instead of finishing with nothing done.
   const { statuses = {} } = await store.get("statuses");
-  const open = (k) => { const s = statuses[k] || ""; return s !== "saved" && (/^skipped|^error: Upload of/.test(s) || !/^(failed|error)/.test(s)); };
+  const open = (k) => { const s = statuses[k] || ""; return s !== "saved" && (/^skipped|^retrying|^error: Upload of/.test(s) || !/^(failed|error)/.test(s)); };
   const order = jobs.map(keyOf).filter((k) => sel.includes(k) && (mode === "run" || open(k)));
   if (!order.length || !order.some(open)) return msg("Every ticked job is already saved or marked failed. Tick them and press Redo ticked to send them again.");
   await store.set({ running: true, mode, queue: mode === "fill" ? order.slice(0, 1) : order });

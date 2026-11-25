@@ -6,7 +6,7 @@
 (() => {
   if (globalThis.PolloPage && globalThis.PolloPage.VERSION) return;
   const P = {};
-  P.VERSION = "1.6.0";
+  P.VERSION = "1.8.0";
 
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   const norm = (s) => (s || "").replace(/\s+/g, " ").trim();
@@ -198,7 +198,12 @@
   // ---------- pictures: Pollo's library dialog (Uploads, Creations ...) ----------
   // Every "+" and the Start / End frame slots open the same library. A file is uploaded once under its own name
   // (the job builder puts a content hash in the name) and picked by that name afterwards.
-  const libDialog = () => [...document.querySelectorAll("[role=dialog]")].find((d) => shown(d) && /Upload Media/.test(d.innerText));
+  // Pollo's library is a Base UI dialog. When it closes it gets "data-closed" at once but stays in the page until its
+  // fade-out ends, and in a hidden or covered Chrome window that fade can hang (25 Nov 2026: "would not close",
+  // "did not close after Select"). So a dialog marked data-closed counts as closed.
+  const libDialog = () => [...document.querySelectorAll("[role=dialog]")].find((d) => !d.hasAttribute("data-closed") && shown(d) && /Upload Media/.test(d.innerText));
+  // Library trouble is often cured by reloading the Pollo tab: the runner does that once per job (see runner.js).
+  const libErr = (m) => Object.assign(new Error(m), { reloadable: true });
   const selectBtn = (d) => [...d.querySelectorAll("button")].find((b) => /^Select/.test(norm(b.textContent)));
   const selCount = (d) => { const m = norm((selectBtn(d) || {}).textContent || "").match(/\((\d+)\//); return m ? Number(m[1]) : 0; };
   // Pollo keeps only the first 25 characters of an upload's name (before the extension).
@@ -214,16 +219,16 @@
       if (x) press(x);
       await waitFor(() => !libDialog(), 5000, 250);
     }
-    if (libDialog()) throw new Error("Pollo's picture library would not close");
+    if (libDialog()) throw libErr("Pollo's picture library would not close");
   }
   P.closeLibrary = closeLibrary;
   async function openLibrary(opener) {
     press(opener);
     const d = await waitFor(libDialog, 8000);
-    if (!d) throw new Error("Pollo's picture library did not open");
+    if (!d) throw libErr("Pollo's picture library did not open");
     const up = [...d.querySelectorAll("button")].find((b) => norm(b.textContent) === "Uploads");
     if (up) { press(up); await sleep(800); }
-    if (selCount(libDialog() || d)) throw new Error("The library already had pictures ticked; nothing was changed");
+    if (selCount(libDialog() || d)) throw libErr("The library already had pictures ticked; nothing was changed");
     return libDialog() || d;
   }
   // A first upload of a new file can stall in Pollo (24 Nov 2026: a 6 MB PNG and a 0.7 MB JPG each sat over 2 minutes).
@@ -235,7 +240,7 @@
   async function chooseInLibrary(opener, files) {
     let d = await openLibrary(opener);
     const D = () => libDialog() || d;
-    const ready = (name) => { const t = tile(D(), name); return t && t.complete; };
+    const ready = (name) => !!tile(D(), name);
     try {
       for (const f of files) {
         let ok = !!ready(f.name);
@@ -254,15 +259,15 @@
           inp.dispatchEvent(new Event("change", { bubbles: true }));
           ok = !!(await waitFor(() => ready(f.name), P.uploadWaits[a], 500));
         }
-        if (!ok) throw new Error(`Upload of ${f.name} did not finish after ${P.uploadWaits.length} tries (about ${Math.round(P.uploadWaits.reduce((x, y) => x + y, 0) / 60000)} min)`);
+        if (!ok) throw libErr(`Upload of ${f.name} did not finish after ${P.uploadWaits.length} tries (about ${Math.round(P.uploadWaits.reduce((x, y) => x + y, 0) / 60000)} min)`);
         await sleep(800);
       }
       for (let i = 0; i < files.length; i++) {
         tile(D(), files[i].name).click();
-        if (!(await waitFor(() => selCount(D()) === i + 1, 4000))) throw new Error(`Could not tick ${files[i].name} in the library`);
+        if (!(await waitFor(() => selCount(D()) === i + 1, 4000))) throw libErr(`Could not tick ${files[i].name} in the library`);
       }
       selectBtn(D()).click();
-      if (!(await waitFor(() => !libDialog(), 8000))) throw new Error("The library did not close after Select");
+      if (!(await waitFor(() => !libDialog(), 8000))) throw libErr("The library did not close after Select");
       await sleep(1200);
     } catch (e) {
       await closeLibrary().catch(() => {});
