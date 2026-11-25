@@ -4,6 +4,8 @@
 
 Identify the room layout, exits, main action axis, each person's position and the important object. Choose who faces whom and who can see or hear each revelation. Keep left/right screen positions and eyelines consistent unless the camera visibly re-establishes the geography.
 
+**Staging map before any frame (compulsory, user 24 Nov 2026):** for every scene draw a top-view floor plan saved in the episode folder: the set, each person's fixed spot, the 180-degree line between the two who talk, and the cameras, all on ONE side of the line: W = the wide that holds both, A = the single on person 1 taken from beside person 2, B = the single on person 2 taken from beside person 1. Write down what is really behind each person from the opposite camera (it is never the same background for both), and which way each looks (one screen LEFT, the other screen RIGHT, in every shot). Every keyframe names its camera (W, A or B) and copies that background. Check every single against the wide before approval. A shot plan background table may not be written until the map is drawn.
+
 Blocking can express status: who occupies the doorway, who must cross the room, who interrupts another person's reach, and who physically shields whom. Use these as character choices. Do not turn high and low angles into a mandatory moral code.
 
 For a prop exchange, record its holder, hand, orientation, movement, contact and final location. For a wound, track side, costume damage, blood and physical limitation. A new close-up must inherit the previous state.
@@ -22,6 +24,8 @@ All camera angles, movement, lenses and shot sizes still apply. A camera move mu
 
 Before any location picture is made, go shot by shot and write which way the camera faces and what fills the frame behind the subject at that shot size (a close-up on a stage needs the backdrop; a medium in a doorway needs the doors and what lies beyond). Map each shot to the location picture that supplies that background. Wherever the master shows that area small or not at all, plan a closer view of it, made from the master so it matches. Show this table with the cost of the location pictures.
 
+
+Every location gets a four-wall set before any frame: FRONT, BACK, LEFT and RIGHT empty views, each its own image made from the approved master and checked against it. A conversation then needs no new background: each person stands against a named wall on the staging map, and the single on that person uses that wall.
 ## Set dressing stays identical
 
 Track set dressing, not only story props: microphones, fountains, lamps, cars, flowers, glassware, curtains. Choose one design for each and give it to every picture that shows it. When a new picture introduces a different design of the same object, correct the odd one out with a targeted edit from the chosen design. Compare these objects across all pictures of the scene, not only against each picture's own prompt.

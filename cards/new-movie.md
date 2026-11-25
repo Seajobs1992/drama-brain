@@ -12,7 +12,7 @@ Order of work. Each stage ends with the user's approval before the next begins.
 2. **Bible.** Premise, lead, opposition, the repeatable conflict, the ending, the episode map.
 3. **Scripts.** All episodes or an act at a time. Dialogue becomes fixed once approved.
 4. **Continuity file** (doc `locks` in the project): format, cast, prop ledger, scene geography with compass directions. Model: doc `series-continuity`.
-5. **References** (card `references`): face options for the user to choose, identity images, sheets with the user's template, props, empty locations, populated masters.
+5. **References** (card `references`): face options for the user to choose, identity images, sheets with the user's template, props, empty locations with their four-wall sets (FRONT, BACK, LEFT, RIGHT), populated masters.
 6. **Staging maps** per episode, before any frame (card `frames`): a top-view floor plan of every scene with the 180-degree line, cameras W, A and B on one side of it, and an empty angle plate for each A and B camera. The user sees the maps with the shot plan.
 7. **Frames** per episode (card `frames`): shot plan written from the maps, masters, angle plates, frames, contact board.
 8. **Clips** in Flow (card `clips`): characters with the user's chosen Flow voices, one take, picture and word check.

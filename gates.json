@@ -24,6 +24,13 @@
         "credits",
         "clips"
       ]
+    },
+    {
+      "bash": "ctl\\.mjs\\s+(start|load_queue)",
+      "cards": [
+        "frames"
+      ],
+      "cards_only": true
     }
   ],
   "precheck_skill": [

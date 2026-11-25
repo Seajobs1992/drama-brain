@@ -1,76 +1,100 @@
 {
-  "skill": {
-    "path": "library/skill/SKILL.md",
-    "about": "The micro-drama writing and directing skill: story engine, episodes, directing, handoff"
-  },
-  "skill-genres": {
-    "path": "library/skill/references/genre-engines.md",
-    "about": "Premises and season shape by genre"
-  },
-  "skill-hooks": {
-    "path": "library/skill/references/hooks-and-episode-chains.md",
-    "about": "Openings, escalation, reveals, cliffhangers"
-  },
-  "skill-dialogue": {
-    "path": "library/skill/references/dialogue-and-payoffs.md",
-    "about": "Voices, subtext, promises and payoffs"
-  },
-  "skill-shots": {
-    "path": "library/skill/references/shots-and-flow.md",
-    "about": "Performance, blocking, continuity, timing, Flow prompts"
-  },
-  "skill-sources": {
-    "path": "library/skill/references/source-lessons-and-review.md",
-    "about": "What the evidence supports, and how to review work"
-  },
-  "checklist": {
-    "path": "library/director-checklist.md",
-    "about": "Director's checklist: before an episode, choosing shots, every prompt, checking every image (written on LOCKED OUT, applies to every movie)",
-    "source": "/Volumes/MAC/NEW DRAM/production/DIRECTOR-CHECKLIST.md"
-  },
-  "skin": {
-    "path": "library/realistic-skin.md",
-    "about": "Prompt words that give real skin, and the words that give plastic faces",
-    "source": "/Volumes/MAC/NEW DRAM/production/PROMPT-RULES-REALISTIC-SKIN.md"
-  },
-  "flow-guide": {
-    "path": "tools/flow-runner/GUIDE.md",
-    "about": "Full guide to producing in Google Flow with the runner extension: set-up, a fresh movie, rejected prompts, the consistency checks (6c), another computer (10)"
-  },
-  "continuity-method": {
-    "path": "library/continuity-method.md",
-    "about": "The visual continuity method: masters, scene maps, prop custody"
-  },
-  "series-continuity": {
-    "path": "library/series-continuity.md",
-    "about": "Model for a series continuity file (cast locks, prop ledger, geography)"
-  },
-  "study": {
-    "path": "library/benchmark-study-untouchable-mechanic.md",
-    "about": "Benchmark study of The Untouchable Mechanic: what its episodes do"
-  },
-  "voices": {
-    "path": "library/flow-voices.md",
-    "about": "All 30 Google Flow voices with Flow's own description (gender, character, pitch), grouped by pitch, and which LOCKED OUT character has which"
-  },
-  "skill-production": {
-    "path": "library/skill/references/production-and-quality.md",
-    "about": "Production discipline: prop state, blocking, gaze, people per shot, sound, checking footage, repair cap"
-  },
-  "skill-refvideo": {
-    "path": "library/skill/references/reference-video-production.md",
-    "about": "Reference-to-video clips (Pollo, Wan, Seedance): keyframes, prompt shape, Wan 3.0 modes, end frames, small props"
-  },
-  "flow-voices": {
-    "path": "library/flow-voices.md",
-    "about": "Alias of 'voices' kept for older movie notes. All 30 Google Flow voices with Flow's own description (gender, character, pitch), grouped by pitch, and which LOCKED OUT character has which"
-  },
-  "skill-camera": {
-    "path": "library/skill/references/cinematography.md",
-    "about": "AI cinematography: 18 camera movements, 20 angles and shots, 18 more shots, micro-drama combinations and the master camera prompt structure. Compulsory for every shot plan, frame and clip (user, 24 Nov 2026)."
-  },
-  "pollo-guide": {
-    "path": "tools/pollo-runner/README.md",
-    "about": "Pollo runner extension: what is free on Unlimited, job list format, install, run, the free-only guard, the terms risk"
-  }
+ "skill": {
+  "path": "library/skill/SKILL.md",
+  "about": "The micro-drama writing and directing skill: story engine, episodes, directing, handoff"
+ },
+ "skill-genres": {
+  "path": "library/skill/references/genre-engines.md",
+  "about": "Premises and season shape by genre"
+ },
+ "skill-hooks": {
+  "path": "library/skill/references/hooks-and-episode-chains.md",
+  "about": "Openings, escalation, reveals, cliffhangers"
+ },
+ "skill-dialogue": {
+  "path": "library/skill/references/dialogue-and-payoffs.md",
+  "about": "Voices, subtext, promises and payoffs"
+ },
+ "skill-shots": {
+  "path": "library/skill/references/shots-and-flow.md",
+  "about": "Performance, blocking, continuity, timing, Flow prompts"
+ },
+ "skill-sources": {
+  "path": "library/skill/references/source-lessons-and-review.md",
+  "about": "What the evidence supports, and how to review work"
+ },
+ "checklist": {
+  "path": "library/director-checklist.md",
+  "about": "Director's checklist: before an episode, choosing shots, every prompt, checking every image (written on LOCKED OUT, applies to every movie)",
+  "source": "/Volumes/MAC/NEW DRAM/production/DIRECTOR-CHECKLIST.md"
+ },
+ "skin": {
+  "path": "library/realistic-skin.md",
+  "about": "Prompt words that give real skin, and the words that give plastic faces",
+  "source": "/Volumes/MAC/NEW DRAM/production/PROMPT-RULES-REALISTIC-SKIN.md"
+ },
+ "flow-guide": {
+  "path": "tools/flow-runner/GUIDE.md",
+  "about": "Full guide to producing in Google Flow with the runner extension: set-up, a fresh movie, rejected prompts, the consistency checks (6c), another computer (10)"
+ },
+ "continuity-method": {
+  "path": "library/continuity-method.md",
+  "about": "The visual continuity method: masters, scene maps, prop custody"
+ },
+ "series-continuity": {
+  "path": "library/series-continuity.md",
+  "about": "Model for a series continuity file (cast locks, prop ledger, geography)"
+ },
+ "study": {
+  "path": "library/benchmark-study-untouchable-mechanic.md",
+  "about": "Benchmark study of The Untouchable Mechanic: what its episodes do"
+ },
+ "voices": {
+  "path": "library/flow-voices.md",
+  "about": "All 30 Google Flow voices with Flow's own description (gender, character, pitch), grouped by pitch, and which LOCKED OUT character has which"
+ },
+ "skill-production": {
+  "path": "library/skill/references/production-and-quality.md",
+  "about": "Production discipline: prop state, blocking, gaze, people per shot, sound, checking footage, repair cap"
+ },
+ "skill-refvideo": {
+  "path": "library/skill/references/reference-video-production.md",
+  "about": "Reference-to-video for any model: staging, keyframes, shot load, testing, observed failures. Prompts themselves come from the model guides (doc prompt-models)."
+ },
+ "flow-voices": {
+  "path": "library/flow-voices.md",
+  "about": "Alias of 'voices' kept for older movie notes. All 30 Google Flow voices with Flow's own description (gender, character, pitch), grouped by pitch, and which LOCKED OUT character has which"
+ },
+ "skill-camera": {
+  "path": "library/skill/references/cinematography.md",
+  "about": "AI cinematography: 18 camera movements, 20 angles and shots, 18 more shots, micro-drama combinations and the master camera prompt structure. Compulsory for every shot plan, frame and clip (user, 24 Nov 2026)."
+ },
+ "prompt-models": {
+  "path": "library/skill/references/model-prompts/README.md",
+  "about": "Which prompt guide for which model; never mix wording across models"
+ },
+ "prompt-wan": {
+  "path": "library/skill/references/model-prompts/wan-3.0.md",
+  "about": "Wan 3.0 prompts: the user's Cinematic Dialogue Standard plus how The Man They Erased applies it"
+ },
+ "prompt-minimax": {
+  "path": "library/skill/references/model-prompts/minimax-h3.md",
+  "about": "MiniMax H3 image-to-video prompts (lip reference takes)"
+ },
+ "prompt-flow": {
+  "path": "library/skill/references/model-prompts/google-flow-omni.md",
+  "about": "Google Flow / Omni 1.2 Flash prompts and Flow-only rules"
+ },
+ "prompt-seedance": {
+  "path": "library/skill/references/model-prompts/seedance.md",
+  "about": "Seedance prompts (not in current use)"
+ },
+ "prompt-stills": {
+  "path": "library/skill/references/model-prompts/stills-firefly-gpt-image.md",
+  "about": "Still image prompts for Firefly (GPT Image 2.6) and Pollo GPT Image"
+ },
+ "pollo-guide": {
+  "path": "tools/pollo-runner/README.md",
+  "about": "Pollo runner extension: what is free on Unlimited, job list format, install, run, the free-only guard, the terms risk"
+ }
 }

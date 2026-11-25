@@ -12,4 +12,4 @@
 10. Privacy: never send the user's name, email or account names to outside services.
 11. Writing: plain English, short sentences, no em dashes.
 12. Read the card for your task. Open a full document only at the section the card names: `brain.py section <doc> "<heading>"`.
-13. Floor plan before frames. Before a scene is framed, draw its top-view staging map: where each person stands and faces, the 180-degree line, and cameras W (wide), A and B on one side of it. Every A and B camera gets an empty angle plate made from the approved master. Every frame names its camera and uses that camera's plate. Card `frames` has the full rule.
+13. Floor plan before frames. Before a scene is framed, draw its top-view staging map: where each person stands and faces, the 180-degree line, and cameras W (wide), A and B on one side of it. Every location is first made as four empty views, FRONT, BACK, LEFT and RIGHT, each its own image from the approved master; each A and B camera uses the wall behind that person. Every frame names its camera and uses that camera's plate. Card `frames` has the full rule.

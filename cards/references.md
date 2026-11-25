@@ -21,7 +21,7 @@ Order of work: references first, inspected, then anything that depends on them.
 - Attach the prop reference to every generation where the prop is visible. Check it in every frame like a face.
 
 **Places**
-- An empty location reference, then a populated scene master (positions, light). Close-ups and reverse angles come from the populated master.
+- An empty location master, then its four-wall set (FRONT, BACK, LEFT, RIGHT, each its own image, card `frames`), then a populated scene master (positions, light). Singles and reverses take their background from the wall behind the person.
 - A new master must match the location authority in doc `locks` and the place's first wide shot. Put them side by side before using it.
 
 **Always**

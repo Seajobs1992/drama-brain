@@ -1447,6 +1447,8 @@ def hook_main():
             if missing:
                 return deny("Drama Brain: this spends credits or generates media. Load the card(s) first: %s card %s   then retry."
                             % (RUN, " ".join(missing)))
+            if rule.get("cards_only"):
+                return                                           # free work (Firefly stills): the card is enough
             with spend_lock(project):
                 sp = load_json(spend_path(project), {})
                 tuid = str(ev.get("tool_use_id") or "")
