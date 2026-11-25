@@ -78,6 +78,7 @@ Chrome extensions can only save inside Chrome's own download folder, so the runn
 - The folder is remembered **per movie** (the movie named in the job list). A new movie asks again.
 - Files go to `<folder>/<episode>/<job id>.png|mp4`, each with `<job id>.json` (task id, record, prompt, settings, credit). An existing file is never overwritten: a new take is `1-04 (1).mp4`.
 - After Chrome restarts it asks for your OK again: the Saver tab shows **Allow access**.
+- The folder is remembered by the movie folder's name. If a movie folder is moved or renamed, put its old name in a file called `.pollo-movie` in the movie folder, and builds keep that name, so the Saver keeps its folder (The Valet moved to `/Volumes/MAC/THE VALET` on 25 Nov 2026 and keeps `the-valet-v2`).
 - Keep the Saver tab open during a run. If it is closed, results still save, but into Chrome's download folder, and the log says so.
 
 ## Run

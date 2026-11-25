@@ -37,6 +37,11 @@ ROOT = os.path.abspath(os.path.expanduser(sys.argv[1]))
 if not os.path.isdir(ROOT):
     sys.exit(f"No such folder: {ROOT}")
 MOVIE = os.path.basename(ROOT.rstrip("/"))
+# A moved or renamed movie folder keeps its runner name (the Saver's output folder is remembered by this name):
+# put the old name in a file called .pollo-movie in the movie folder.
+_name_file = os.path.join(ROOT, ".pollo-movie")
+if os.path.isfile(_name_file):
+    MOVIE = open(_name_file, encoding="utf-8").read().strip() or MOVIE
 
 FREE = {
     "image": {"models": ["GPT Image 2"], "resolution": ["1K", "2K"], "quality": ["Low", "Medium"]},
